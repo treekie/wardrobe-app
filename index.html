@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="theme-color" content="#1f7a6d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="衣橱搭配">
+<meta name="description" content="拍照记录衣物，按天气和场景推荐每日穿搭">
+<title>衣橱搭配</title>
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f7a6d'/%3E%3Cpath d='M32 16a5 5 0 0 1 5 5c0 3-5 4-5 7v2L12 44h40L32 30' fill='none' stroke='%23fff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#f5f4f0;--card:#fff;--ink:#1d2321;--sub:#6b736f;--mute:#9aa19d;--line:#e9e6df;--pri:#1f7a6d;--pri2:#e4f1ed;--acc:#ff7a59;--acc2:#fff0eb;--danger:#e5484d;--r:18px;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.05)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC","Noto Sans SC",sans-serif;-webkit-font-smoothing:antialiased}
+body{overflow-x:hidden;overflow-x:clip;padding-top:var(--sat);padding-left:env(safe-area-inset-left,0);padding-right:env(safe-area-inset-right,0);overscroll-behavior-y:none}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+input,select,textarea{font:inherit;color:inherit}
+.page{display:none;padding:8px 16px calc(100px + var(--sab));max-width:640px;margin:0 auto;animation:fade .25s ease}
+.page.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ph{display:flex;align-items:flex-end;justify-content:space-between;padding:14px 2px 12px}
+.ph h1{margin:0;font-size:26px;letter-spacing:.5px;font-weight:800}
+.ph .sub{color:var(--sub);font-size:13px;margin-top:2px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+.sec-t{font-weight:700;font-size:16px;margin:18px 2px 10px;display:flex;align-items:center;justify-content:space-between}
+.sec-t small{font-weight:400;color:var(--sub);font-size:12px}
+.muted{color:var(--sub)}.tiny{font-size:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:44px;padding:0 18px;border-radius:14px;background:var(--pri);color:#fff;font-weight:600;transition:transform .1s,opacity .2s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--pri2);color:var(--pri)}
+.btn.line{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.warn{background:var(--acc2);color:#d4532f}
+.btn.danger{background:#fdecec;color:var(--danger)}
+.btn.sm{height:34px;padding:0 12px;border-radius:11px;font-size:13px}
+.btn.block{width:100%}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.row{display:flex;gap:10px;align-items:center}.row>*{min-width:0}.grow{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:2px 16px 4px}
+.chips.scroll::-webkit-scrollbar{display:none}
+.chip{flex:none;height:34px;padding:0 13px;border-radius:17px;background:#fff;border:1px solid var(--line);font-size:14px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;transition:all .15s}
+.chip.on{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:600}
+.chip.big{height:40px;border-radius:20px;padding:0 15px}
+.wx{background:linear-gradient(135deg,#1f7a6d,#2f9c8a 60%,#56b8a2);color:#fff;position:relative;overflow:hidden}
+.wx:after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.08)}
+.wx .city{display:flex;align-items:center;gap:6px;font-size:14px;opacity:.95;position:relative;z-index:1}
+.wx .city button{color:#fff;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:12px;font-size:12px}
+.wx .main{display:flex;align-items:center;justify-content:space-between;margin:6px 0 4px}
+.wx .temp{font-size:54px;font-weight:300;line-height:1;letter-spacing:-2px}
+.wx .temp sup{font-size:22px;letter-spacing:0;vertical-align:top;margin-left:2px}
+.wx .ico{font-size:52px;line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.15))}
+.wx .cond{font-size:15px;opacity:.95}
+.wx .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px;position:relative;z-index:1}
+.wx .grid div{background:rgba(255,255,255,.14);border-radius:12px;padding:7px 4px;text-align:center;font-size:11px;opacity:.95}
+.wx .grid b{display:block;font-size:14px;font-weight:600}
+.wx .tip{margin-top:10px;font-size:13px;background:rgba(0,0,0,.12);border-radius:12px;padding:8px 10px;position:relative;z-index:1}
+.skel{background:linear-gradient(90deg,#eee 25%,#f6f6f6 50%,#eee 75%);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:12px}
+@keyframes sk{to{background-position:-200% 0}}
+.of{padding:14px}
+.of-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.of-h b{font-size:16px}
+.badge{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:11px;font-size:12px;background:var(--pri2);color:var(--pri);font-weight:600}
+.badge.o{background:var(--acc2);color:#d4532f}
+.of-items{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.of-items.n2{grid-template-columns:repeat(2,1fr)}
+.of-it{position:relative;border-radius:14px;overflow:hidden;background:#f1efea;aspect-ratio:1}
+.of-it img,.thumb img,.mini img{width:100%;height:100%;object-fit:cover;display:block}
+.of-it span{position:absolute;left:6px;bottom:6px;right:6px;font-size:11px;color:#fff;background:rgba(0,0,0,.45);border-radius:8px;padding:2px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reason{margin:12px 0;font-size:13.5px;color:#3d4542;background:#f7f6f2;border-radius:12px;padding:10px 12px;line-height:1.65}
+.reason p{margin:0}
+.of.done{outline:2px solid var(--pri)}
+.empty{text-align:center;padding:30px 16px;color:var(--sub)}
+.empty .e{font-size:44px;margin-bottom:6px}
+.hint{background:var(--acc2);color:#a3462a;border-radius:14px;padding:10px 12px;font-size:13px;margin-bottom:12px;line-height:1.6}
+.hint b{color:#c4471f}
+.hint.g{background:var(--pri2);color:#1d5f55}
+.search{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:0 12px;height:44px;margin-bottom:10px}
+.search input{border:0;outline:0;flex:1;background:transparent;height:40px;font-size:16px;min-width:0}
+.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0 12px}
+.filters select{width:100%;height:36px;border-radius:11px;border:1px solid var(--line);background:#fff;padding:0 6px;font-size:13px;-webkit-appearance:none;appearance:none;text-align:center;text-align-last:center}
+.filters select.on{border-color:var(--pri);color:var(--pri);background:var(--pri2);font-weight:600}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:520px){.grid2{grid-template-columns:repeat(3,1fr)}}
+.it{background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);text-align:left;display:block;width:100%}
+.it .thumb{aspect-ratio:1;background:#f1efea;position:relative}
+.it .fav{position:absolute;right:8px;top:8px;font-size:16px}
+.it .wc{position:absolute;left:8px;bottom:8px;font-size:11px;background:rgba(255,255,255,.9);border-radius:9px;padding:1px 7px;color:var(--sub)}
+.it .demo{position:absolute;left:8px;top:8px;font-size:10px;background:rgba(0,0,0,.55);color:#fff;border-radius:8px;padding:1px 6px}
+.it .meta{padding:9px 11px 11px}
+.it .nm{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.it .sm{font-size:12px;color:var(--sub);display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.12);flex:none;vertical-align:-1px}
+.ph-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:42px}
+.f-photo{border-radius:var(--r);background:#fff;box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+.f-photo .pv{aspect-ratio:4/3;background:#f1efea;display:flex;align-items:center;justify-content:center;flex-direction:column;color:var(--sub);gap:6px}
+.f-photo .pv img{width:100%;height:100%;object-fit:contain}
+.f-photo .acts{display:flex;gap:8px;padding:12px}
+.f-photo .acts .btn{flex:1}
+.fld{margin-bottom:16px}
+.fld>label,.lbl{display:block;font-size:13px;color:var(--sub);margin-bottom:7px;font-weight:600}
+.lbl em{font-style:normal;color:var(--danger)}
+.inp{width:100%;height:44px;border-radius:12px;border:1px solid var(--line);background:#fff;padding:0 12px;font-size:16px;outline:0}
+.inp:focus{border-color:var(--pri)}
+textarea.inp{height:72px;padding:10px 12px;resize:vertical}
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:8px}
+.sw button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--sub);padding:4px 0;border-radius:12px}
+.sw button i{width:30px;height:30px;border-radius:50%;border:1px solid rgba(0,0,0,.12);display:block;transition:transform .15s}
+.sw button.on{background:var(--pri2);color:var(--pri);font-weight:700}
+.sw button.on i{transform:scale(1.1);box-shadow:0 0 0 3px #fff,0 0 0 5px var(--pri)}
+.warm{display:flex;gap:6px}
+.warm button{flex:1;height:52px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:12px;color:var(--sub);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}
+.warm button b{font-size:16px;color:var(--ink)}
+.warm button.on{background:var(--acc);border-color:var(--acc);color:#fff}.warm button.on b{color:#fff}
+.sw-row{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:12px;height:48px;padding:0 12px;margin-bottom:10px}
+.tog{width:48px;height:28px;border-radius:14px;background:#d9d6cf;position:relative;transition:.2s;flex:none}
+.tog:after{content:"";position:absolute;left:3px;top:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tog.on{background:var(--pri)}.tog.on:after{left:23px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.detect{font-size:12px;margin-top:8px;color:var(--pri)}
+.sticky-save{position:sticky;bottom:calc(76px + var(--sab));display:flex;gap:10px;padding-top:6px;z-index:5}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:#fff;border-radius:16px;padding:14px;box-shadow:var(--shadow)}
+.kpi b{display:block;font-size:24px;font-weight:800;letter-spacing:.3px}
+.kpi span{font-size:12px;color:var(--sub)}
+.kpi.p{background:linear-gradient(135deg,#1f7a6d,#38a08c);color:#fff}.kpi.p span{color:rgba(255,255,255,.85)}
+.bars .b{display:grid;grid-template-columns:64px 1fr 38px;align-items:center;gap:8px;margin:7px 0;font-size:13px}
+.bars .tr{height:12px;background:#f0eee8;border-radius:6px;overflow:hidden}
+.bars .fl{height:100%;border-radius:6px;background:var(--pri);transition:width .6s}
+.bars .n{text-align:right;color:var(--sub);font-variant-numeric:tabular-nums}
+.donut{display:flex;align-items:center;gap:16px}
+.legend{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;font-size:12px}
+.legend div{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.rank{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.rank:last-child{border:0}
+.rank .thumb,.mini{width:44px;height:44px;border-radius:10px;overflow:hidden;background:#f1efea;flex:none;display:block}
+.rank .grow{min-width:0}.rank .nm{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hscroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.hscroll::-webkit-scrollbar{display:none}
+.hscroll .mi{flex:none;width:76px;text-align:center;font-size:11px;color:var(--sub)}
+.hscroll .mi .mini{width:76px;height:76px;border-radius:14px;margin-bottom:4px}
+.seg{display:flex;background:#ebe8e1;border-radius:12px;padding:3px;margin-bottom:12px}
+.seg button{flex:1;height:32px;border-radius:10px;font-size:13px;color:var(--sub)}
+.seg button.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.list{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+.li{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);width:100%;text-align:left}
+.li:last-child{border:0}
+.li .ic{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;background:var(--pri2);flex:none}
+.li .grow b{display:block;font-weight:600;font-size:15px}
+.li .grow span{font-size:12px;color:var(--sub)}
+.li .arr{color:var(--mute)}
+.li.red b{color:var(--danger)}
+.tabbar{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.92);-webkit-backdrop-filter:saturate(180%) blur(14px);backdrop-filter:saturate(180%) blur(14px);border-top:1px solid rgba(0,0,0,.06);display:flex;padding:6px 4px calc(6px + var(--sab));z-index:40}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;color:var(--mute);padding:4px 0}
+.tab svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tab.on{color:var(--pri);font-weight:600}
+.tab .add{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#1f7a6d,#36a18c);color:#fff;display:flex;align-items:center;justify-content:center;margin-top:-24px;box-shadow:0 6px 16px rgba(31,122,109,.4);border:4px solid var(--bg)}
+.tab .add svg{stroke:#fff;stroke-width:2.4}
+.mask{position:fixed;inset:0;background:rgba(20,24,22,.42);z-index:60;opacity:0;pointer-events:none;transition:opacity .25s}
+.mask.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-height:92vh;max-height:92dvh;background:var(--bg);border-radius:22px 22px 0 0;z-index:61;transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;max-width:640px;margin:0 auto}
+.sheet.on{transform:none}
+.sheet .grab{width:40px;height:5px;border-radius:3px;background:#d3d0c8;margin:8px auto 4px;flex:none}
+.sheet .sh-h{display:flex;align-items:center;justify-content:space-between;padding:4px 16px 8px;flex:none}
+.sheet .sh-h b{font-size:17px}
+.sheet .sh-b{overflow-y:auto;padding:0 16px calc(20px + var(--sab));-webkit-overflow-scrolling:touch}
+.x{width:32px;height:32px;border-radius:50%;background:#e8e5de;font-size:18px;line-height:32px;text-align:center;color:var(--sub)}
+.det-img{border-radius:var(--r);overflow:hidden;background:#f1efea;aspect-ratio:1;margin:0 auto 12px;max-height:46vh}
+.det-img img{width:100%;height:100%;object-fit:contain}
+.kv{display:grid;grid-template-columns:84px 1fr;gap:9px 10px;font-size:14px;margin:0}
+.kv dt{color:var(--sub)}.kv dd{margin:0;word-break:break-all}
+.res{display:block;width:100%;text-align:left;padding:12px 14px;background:#fff;border-radius:14px;margin-bottom:8px;box-shadow:var(--shadow)}
+.res b{display:block}.res span{font-size:12px;color:var(--sub)}
+.toast{position:fixed;left:50%;bottom:calc(96px + var(--sab));transform:translateX(-50%) translateY(20px);background:rgba(29,35,33,.92);color:#fff;padding:10px 18px;border-radius:22px;font-size:14px;z-index:90;opacity:0;transition:all .25s;pointer-events:none;max-width:86vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.spin{width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:rot .8s linear infinite;display:inline-block}
+.spin.d{border-color:rgba(0,0,0,.12);border-top-color:var(--pri)}
+@keyframes rot{to{transform:rotate(360deg)}}
+.hist{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.hist:last-child{border:0}
+.hist .d{width:70px;font-size:12px;color:var(--sub);flex:none}
+.hist .mini{width:38px;height:38px;border-radius:9px}
+</style>
+</head>
+<body>
+<section class="page on" id="p-today">
+  <div class="ph"><div><h1>今日搭配</h1><div class="sub" id="todayDate"></div></div><div id="todayBadge"></div></div>
+  <div id="wxBox"></div>
+  <div class="sec-t">今天的场景 <small id="occDesc"></small></div>
+  <div class="chips scroll" id="occChips"></div>
+  <div class="sec-t">风格偏好 <small id="styDesc">可多选</small></div>
+  <div class="chips scroll" id="styChips"></div>
+  <div id="recBox" style="margin-top:14px"></div>
+</section>
+<section class="page" id="p-closet">
+  <div class="ph"><div><h1>我的衣橱</h1><div class="sub" id="closetSub"></div></div><button class="btn sm ghost" data-go="add">＋ 添加</button></div>
+  <div class="search"><span>🔍</span><input id="q" type="search" placeholder="搜索名称、品牌、备注…" autocomplete="off"></div>
+  <div class="chips scroll" id="catChips"></div>
+  <div class="filters" id="filters"></div>
+  <div id="closetGrid"></div>
+</section>
+<section class="page" id="p-add">
+  <div class="ph"><div><h1 id="formTitle">添加衣物</h1><div class="sub">拍照记录你的每一件衣服</div></div></div>
+  <div id="formBox"></div>
+</section>
+<section class="page" id="p-stats">
+  <div class="ph"><div><h1>衣橱统计</h1><div class="sub">了解你的穿衣习惯</div></div></div>
+  <div id="statsBox"></div>
+</section>
+<section class="page" id="p-settings">
+  <div class="ph"><div><h1>设置</h1><div class="sub">数据保存在本机浏览器中</div></div></div>
+  <div id="setBox"></div>
+</section>
+<nav class="tabbar" id="tabbar">
+  <button class="tab on" data-go="today"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>今日搭配</button>
+  <button class="tab" data-go="closet"><svg viewBox="0 0 24 24"><path d="M12 6a2 2 0 1 1 2-2c0 1.2-2 1.6-2 3v1"/><path d="M12 8 3 15.5a1 1 0 0 0 .6 1.8h16.8a1 1 0 0 0 .6-1.8L12 8z"/></svg>衣橱</button>
+  <button class="tab" data-go="add" aria-label="添加"><span class="add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span></button>
+  <button class="tab" data-go="stats"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>统计</button>
+  <button class="tab" data-go="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>设置</button>
+</nav>
+<div class="mask" id="mask"></div>
+<div class="sheet" id="sheet"><div class="grab"></div><div class="sh-h"><b id="shTitle"></b><button class="x" id="shClose">×</button></div><div class="sh-b" id="shBody"></div></div>
+<div class="toast" id="toast"></div>
+<input type="file" id="fileCam" accept="image/*" capture="environment" hidden>
+<input type="file" id="fileAlb" accept="image/*" hidden>
+<input type="file" id="fileImport" accept="application/json,.json" hidden>
+<script>
+'use strict';
+const IS_APP=!!window.AndroidBridge; /* 安卓 App 内运行 */
+if(IS_APP)document.documentElement.classList.add('native');
+/* ===== 工具 ===== */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const z2=n=>String(n).padStart(2,'0');
+const todayStr=(d=new Date())=>d.getFullYear()+'-'+z2(d.getMonth()+1)+'-'+z2(d.getDate());
+const addDays=(s,n)=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return todayStr(d)};
+const daysBetween=(a,b)=>Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const fmtMoney=n=>'¥'+(Math.round(n*100)/100).toLocaleString('zh-CN');
+const WEEK='日一二三四五六';
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+let toastT;function toast(m,ms=2200){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('on'),ms)}
+
+/* ===== 基础数据 ===== */
+const CATS={
+ '上衣':['T恤','衬衫','Polo衫','针织衫/毛衣','卫衣','背心/吊带','运动上衣','家居上衣'],
+ '裤子':['牛仔裤','西裤','休闲裤','运动裤','短裤','打底裤','家居裤'],
+ '裙子':['连衣裙','半身裙','短裙'],
+ '套装':['运动套装','家居服','西装套装'],
+ '外套':['西装外套','夹克','风衣','大衣','羽绒服','冲锋衣','针织开衫','卫衣外套','防晒衣'],
+ '鞋子':['运动鞋','跑鞋','徒步鞋','皮鞋','休闲鞋','高跟鞋','靴子','凉鞋','拖鞋'],
+ '配饰':['帽子','围巾','包','腰带','首饰','手表','眼镜','雨伞']
+};
+const CAT_ICON={'上衣':'👕','裤子':'👖','裙子':'👗','套装':'🎽','外套':'🧥','鞋子':'👟','配饰':'👜'};
+const COLORS=[['黑色','#1f1f1f',1,0],['白色','#f7f7f4',1,0],['灰色','#9b9b9b',1,0],['米色','#e8dcc4',1,40],['卡其','#c2a878',1,40],['棕色','#7a5233',1,25],['藏青','#1f2f55',1,225],['牛仔蓝','#4a6a92',1,215],['军绿','#5d6b3a',1,75],['银色','#c9ccd1',1,0],
+ ['红色','#d63a3a',0,0],['酒红','#7d1f2e',0,350],['粉色','#f1a7b8',0,345],['橙色','#ef8a2c',0,28],['黄色','#f2cb3d',0,50],['绿色','#3f9a5a',0,135],['蓝色','#2f6fd6',0,215],['浅蓝','#9cc3ea',0,205],['紫色','#8a5cc2',0,275],['金色','#cfa64a',0,45]];
+const COLOR={};COLORS.forEach(([n,h,neu,hue])=>COLOR[n]={hex:h,n:!!neu,h:hue});
+const SEASONS=['春','夏','秋','冬'];
+const STYLES=['正式','商务休闲','休闲','运动','户外功能','亮眼派对','居家'];
+const STYLE_TAGS=['简约','通勤风','商务正装','街头','运动风','韩系','日系','法式优雅','复古','文艺森系','美式休闲','工装机能','甜美','中性风','新中式','户外机能风'];
+const WARM_L=['','很薄','轻薄','适中','保暖','厚实'];
+/* 场景规则：st=风格加权；bad=不适合的风格；pref=推荐子类；avoid=避免子类 */
+const OCC={
+ '上班':{i:'💼',d:'得体干练，商务休闲为主',st:{正式:2.5,商务休闲:3,休闲:.5},bad:['运动','居家','户外功能'],pref:['衬衫','Polo衫','针织衫/毛衣','西裤','休闲裤','半身裙','西装外套','风衣','大衣','皮鞋','休闲鞋','包','手表','腰带'],avoid:['短裤','短裙','拖鞋','运动裤','背心/吊带','跑鞋','家居上衣','家居裤','家居服','运动套装','凉鞋','打底裤'],shoes:1,formal:1},
+ '通勤':{i:'🚇',d:'舒适利落，方便走路挤地铁',st:{商务休闲:3,休闲:2.5,正式:1,运动:.3},bad:['居家','亮眼派对'],pref:['衬衫','T恤','针织衫/毛衣','牛仔裤','休闲裤','风衣','夹克','休闲鞋','运动鞋','包','雨伞'],avoid:['拖鞋','家居上衣','家居裤','家居服','高跟鞋','背心/吊带'],shoes:1},
+ '会议':{i:'📊',d:'正式稳重，深色为佳',st:{正式:3.5,商务休闲:2},bad:['运动','居家','户外功能','亮眼派对'],pref:['衬衫','西裤','西装外套','西装套装','皮鞋','半身裙','手表','腰带','包'],avoid:['T恤','卫衣','牛仔裤','短裤','短裙','运动鞋','跑鞋','拖鞋','凉鞋','背心/吊带','帽子','卫衣外套','运动上衣','运动裤'],shoes:1,formal:2},
+ '约会':{i:'💕',d:'精致有亮点，适度用色',st:{亮眼派对:2.5,休闲:2,商务休闲:2,正式:1},bad:['运动','居家','户外功能'],pref:['衬衫','连衣裙','针织衫/毛衣','半身裙','风衣','大衣','休闲鞋','高跟鞋','靴子','首饰','包'],avoid:['运动裤','拖鞋','跑鞋','家居服','冲锋衣','徒步鞋','运动上衣'],shoes:1,bright:1},
+ '健身':{i:'🏋️',d:'速干透气，运动鞋必备',st:{运动:4},bad:['正式','商务休闲','亮眼派对','居家','户外功能'],pref:['运动上衣','运动裤','打底裤','运动套装','短裤','跑鞋','运动鞋','卫衣外套','帽子'],avoid:['衬衫','Polo衫','牛仔裤','西裤','休闲裤','连衣裙','半身裙','短裙','皮鞋','高跟鞋','靴子','凉鞋','休闲鞋','大衣','西装外套','风衣','首饰','手表','包','围巾','腰带','雨伞'],shoes:1,shoeReq:['运动鞋','跑鞋'],styleReq:'运动'},
+ '休闲逛街':{i:'🛍️',d:'轻松舒适，好走路',st:{休闲:3,亮眼派对:1,运动:1,商务休闲:1},bad:['正式','居家'],pref:['T恤','卫衣','牛仔裤','连衣裙','短裤','夹克','运动鞋','休闲鞋','包','帽子','眼镜'],avoid:['西装套装','拖鞋','家居服','家居上衣','家居裤','高跟鞋'],shoes:1},
+ '聚会派对':{i:'🎉',d:'穿出个性，来点亮眼单品',st:{亮眼派对:4,休闲:1.5,商务休闲:1},bad:['居家','户外功能','运动'],pref:['背心/吊带','连衣裙','短裙','夹克','高跟鞋','靴子','首饰'],avoid:['运动裤','家居服','拖鞋','跑鞋','冲锋衣','徒步鞋','运动上衣'],shoes:1,bright:2},
+ '旅行出游':{i:'🧳',d:'舒适百搭，适合走路拍照',st:{休闲:3,户外功能:2,运动:1.5},bad:['正式','居家'],pref:['T恤','牛仔裤','休闲裤','连衣裙','夹克','风衣','冲锋衣','防晒衣','运动鞋','休闲鞋','徒步鞋','帽子','包','眼镜','雨伞'],avoid:['高跟鞋','皮鞋','西装套装','拖鞋','西裤'],shoes:1},
+ '户外徒步':{i:'🥾',d:'功能保暖防水，穿徒步鞋',st:{户外功能:4,运动:2.5},bad:['正式','商务休闲','亮眼派对','居家'],pref:['运动上衣','运动裤','冲锋衣','防晒衣','羽绒服','徒步鞋','运动鞋','帽子'],avoid:['衬衫','西裤','连衣裙','半身裙','短裙','皮鞋','高跟鞋','凉鞋','拖鞋','大衣','西装外套','风衣','首饰','腰带','手表','牛仔裤','包','雨伞'],shoes:1,shoeReq:['徒步鞋','运动鞋','跑鞋'],outdoor:1},
+ '居家':{i:'🏠',d:'宽松舒适，在家放松',st:{居家:4,休闲:2,运动:1},bad:['正式','亮眼派对','户外功能'],pref:['家居上衣','家居裤','家居服','卫衣','T恤','针织开衫','拖鞋','运动裤'],avoid:['西装外套','西裤','皮鞋','高跟鞋','靴子','大衣','羽绒服','冲锋衣','风衣','首饰','包','手表','腰带','围巾','雨伞','帽子','眼镜'],shoes:0,indoor:1}
+};
+const OCCS=Object.keys(OCC);
+/* 子类默认值：[保暖, 风格, 季节, 场景] */
+const SUB_DEF={'T恤':[1,'休闲','春夏秋','通勤,休闲逛街,旅行出游'],'衬衫':[2,'商务休闲','春夏秋','上班,通勤,会议,约会'],'Polo衫':[1,'商务休闲','夏','上班,通勤,休闲逛街'],'针织衫/毛衣':[3,'商务休闲','秋冬','上班,通勤,约会'],'卫衣':[3,'休闲','春秋冬','休闲逛街,旅行出游,居家'],'背心/吊带':[1,'亮眼派对','夏','约会,聚会派对'],'运动上衣':[1,'运动','春夏秋','健身,户外徒步'],'家居上衣':[2,'居家','春夏秋冬','居家'],
+ '牛仔裤':[2,'休闲','春秋冬','通勤,休闲逛街,约会,旅行出游'],'西裤':[2,'正式','春夏秋冬','上班,会议,通勤'],'休闲裤':[2,'商务休闲','春秋','上班,通勤,休闲逛街,旅行出游'],'运动裤':[2,'运动','春秋冬','健身,户外徒步,居家'],'短裤':[1,'休闲','夏','休闲逛街,旅行出游,居家'],'打底裤':[2,'运动','春秋冬','健身,休闲逛街'],'家居裤':[2,'居家','春夏秋冬','居家'],
+ '连衣裙':[1,'休闲','春夏','约会,休闲逛街,聚会派对,旅行出游'],'半身裙':[2,'商务休闲','春夏秋','上班,通勤,会议,约会'],'短裙':[1,'亮眼派对','夏','约会,聚会派对,休闲逛街'],
+ '运动套装':[2,'运动','春秋','健身,户外徒步,休闲逛街'],'家居服':[2,'居家','春夏秋冬','居家'],'西装套装':[3,'正式','春秋冬','上班,会议'],
+ '西装外套':[3,'正式','春秋','上班,会议,约会'],'夹克':[3,'休闲','春秋','通勤,休闲逛街,旅行出游'],'风衣':[3,'商务休闲','春秋','上班,通勤,约会,旅行出游'],'大衣':[4,'商务休闲','冬','上班,通勤,会议,约会'],'羽绒服':[5,'休闲','冬','通勤,休闲逛街,旅行出游,户外徒步'],'冲锋衣':[3,'户外功能','春秋冬','户外徒步,旅行出游'],'针织开衫':[2,'休闲','春秋','通勤,休闲逛街,居家'],'卫衣外套':[2,'运动','春秋','健身,休闲逛街,户外徒步'],'防晒衣':[1,'户外功能','夏','户外徒步,旅行出游,休闲逛街'],
+ '运动鞋':[2,'运动','春夏秋冬','健身,休闲逛街,旅行出游,户外徒步'],'跑鞋':[2,'运动','春夏秋冬','健身'],'徒步鞋':[3,'户外功能','春夏秋冬','户外徒步,旅行出游'],'皮鞋':[2,'正式','春夏秋冬','上班,会议,约会'],'休闲鞋':[2,'休闲','春夏秋冬','通勤,休闲逛街,约会,旅行出游'],'高跟鞋':[2,'亮眼派对','春夏秋','约会,聚会派对,会议'],'靴子':[4,'休闲','秋冬','通勤,约会,休闲逛街,聚会派对'],'凉鞋':[1,'休闲','夏','休闲逛街,旅行出游'],'拖鞋':[1,'居家','夏','居家'],
+ '帽子':[2,'休闲','春夏秋冬','休闲逛街,旅行出游,户外徒步'],'围巾':[3,'商务休闲','秋冬','上班,通勤,约会,休闲逛街'],'包':[2,'商务休闲','春夏秋冬','上班,通勤,会议,约会'],'腰带':[2,'商务休闲','春夏秋冬','上班,会议'],'首饰':[1,'亮眼派对','春夏秋冬','约会,聚会派对'],'手表':[1,'商务休闲','春夏秋冬','上班,会议,约会'],'眼镜':[1,'休闲','春夏秋冬','休闲逛街,旅行出游'],'雨伞':[1,'休闲','春夏秋冬','上班,通勤,会议,约会,休闲逛街,旅行出游']};
+
+/* ===== 存储 (IndexedDB) ===== */
+const DB={db:null,mem:null,
+ async open(){try{if(!window.indexedDB)throw new Error('no idb');this.db=await new Promise((res,rej)=>{const r=indexedDB.open('wardrobe-db',1);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('items'))d.createObjectStore('items',{keyPath:'id'});if(!d.objectStoreNames.contains('logs'))d.createObjectStore('logs',{keyPath:'date'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);setTimeout(()=>rej(new Error('timeout')),6000)})}catch(e){console.warn('IndexedDB 不可用，改用内存模式',e);this.mem={items:new Map(),logs:new Map()};setTimeout(()=>toast('当前浏览器无法持久保存，数据仅本次有效',4000),800)}},
+ run(store,mode,fn){return new Promise((res,rej)=>{const t=this.db.transaction(store,mode);const s=t.objectStore(store);const req=fn(s);t.oncomplete=()=>res(req&&'result' in req?req.result:undefined);t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error)})},
+ all(st){return this.mem?Promise.resolve([...this.mem[st].values()]):this.run(st,'readonly',s=>s.getAll())},
+ put(st,v){if(this.mem){this.mem[st].set(v.id??v.date,v);return Promise.resolve()}return this.run(st,'readwrite',s=>{s.put(v)})},
+ putMany(st,arr){if(this.mem){arr.forEach(v=>this.mem[st].set(v.id??v.date,v));return Promise.resolve()}return this.run(st,'readwrite',s=>{arr.forEach(v=>s.put(v))})},
+ del(st,k){if(this.mem){this.mem[st].delete(k);return Promise.resolve()}return this.run(st,'readwrite',s=>{s.delete(k)})},
+ clear(st){if(this.mem){this.mem[st].clear();return Promise.resolve()}return this.run(st,'readwrite',s=>{s.clear()})}
+};
+const LS={get(k,d){try{const v=localStorage.getItem('wd_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('wd_'+k,JSON.stringify(v))}catch(e){}}};
+const S={items:[],logs:[],page:'today',occ:LS.get('occ','通勤'),city:LS.get('city',null),wx:null,wxState:'idle',seed:Date.now()%100000,shown:new Set(),recs:null,
+ filter:{cat:'全部',season:'',occ:'',color:'',tag:'',q:'',sort:'new'},statTab:'cat'};
+if(!OCC[S.occ])S.occ='通勤';
+S.prefStyles=(LS.get('prefStyles',null)??LS.get('defStyles',[])).filter(x=>STYLE_TAGS.includes(x));
+
+/* ===== 衣物辅助 ===== */
+const slotOf=it=>it.cat==='上衣'?'top':it.cat==='裤子'?'bottom':it.cat==='裙子'?(it.sub==='连衣裙'?'one':'bottom'):it.cat==='套装'?'one':it.cat==='外套'?'outer':it.cat==='鞋子'?'shoes':'acc';
+const lastWorn=it=>(it.wears&&it.wears.length)?it.wears.reduce((a,b)=>a>b?a:b):null;
+const nameOf=it=>it.name||((it.color||'')+(it.sub||it.cat));
+const imgHTML=it=>it.photo?`<img src="${it.photo}" alt="${esc(nameOf(it))}" loading="lazy">`:`<div class="ph-empty" style="background:${(COLOR[it.color]||{}).hex||'#eeeeee'}33">${CAT_ICON[it.cat]||'👚'}</div>`;
+const byId=id=>S.items.find(i=>i.id===id);
+
+/* ===== 天气 ===== */
+const WMO={0:['晴','☀️'],1:['晴间多云','🌤️'],2:['多云','⛅'],3:['阴','☁️'],45:['雾','🌫️'],48:['雾凇','🌫️'],51:['小毛毛雨','🌦️'],53:['毛毛雨','🌦️'],55:['大毛毛雨','🌧️'],56:['冻毛毛雨','🌧️'],57:['冻毛毛雨','🌧️'],61:['小雨','🌧️'],63:['中雨','🌧️'],65:['大雨','🌧️'],66:['冻雨','🌧️'],67:['冻雨','🌧️'],71:['小雪','🌨️'],73:['中雪','🌨️'],75:['大雪','❄️'],77:['雪粒','🌨️'],80:['阵雨','🌦️'],81:['阵雨','🌧️'],82:['强阵雨','⛈️'],85:['阵雪','🌨️'],86:['强阵雪','❄️'],95:['雷阵雨','⛈️'],96:['雷阵雨伴冰雹','⛈️'],99:['强雷暴冰雹','⛈️']};
+const isWet=c=>c!=null&&((c>=51&&c<=67)||(c>=80&&c<=82)||c>=95);
+const isSnow=c=>c!=null&&((c>=71&&c<=77)||c===85||c===86);
+const beaufort=k=>{const t=[1,6,12,20,29,39,50,62,75,89,103,118];let i=0;while(i<t.length&&k>=t[i])i++;return i};
+async function fetchJSON(u,ms=10000){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);try{const r=await fetch(u,{signal:c.signal});if(!r.ok)throw new Error('HTTP '+r.status);return await r.json()}finally{clearTimeout(t)}}
+async function loadWeather(force){
+ if(!S.city||S.city.manual){if(!S.city){S.wxState='nocity'}renderWx();renderRecs();return}
+ const key=S.city.lat+','+S.city.lon;const cache=LS.get('wxcache',null);
+ if(!force&&cache&&cache.key===key&&Date.now()-cache.ts<20*60e3){S.wx=cache.wx;S.wxState='ok';renderWx();renderRecs();return}
+ S.wxState='loading';renderWx();renderRecs();
+ try{
+  const u=`https://api.open-meteo.com/v1/forecast?latitude=${S.city.lat}&longitude=${S.city.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,uv_index_max&timezone=auto&forecast_days=1`;
+  const d=await fetchJSON(u);const c=d.current||{},dl=d.daily||{};
+  if(c.temperature_2m==null)throw new Error('无数据');
+  S.wx={temp:c.temperature_2m,feels:c.apparent_temperature??c.temperature_2m,hum:c.relative_humidity_2m,precip:c.precipitation||0,code:c.weather_code,wind:c.wind_speed_10m||0,tmax:dl.temperature_2m_max?.[0],tmin:dl.temperature_2m_min?.[0],pop:dl.precipitation_probability_max?.[0],psum:dl.precipitation_sum?.[0],uv:dl.uv_index_max?.[0],time:c.time};
+  LS.set('wxcache',{key,ts:Date.now(),wx:S.wx});S.wxState='ok';
+ }catch(e){console.warn('天气获取失败',e);if(cache&&cache.key===key){S.wx={...cache.wx,stale:true};S.wxState='ok';toast('网络不可用，显示上次缓存的天气')}else{S.wxState='err'}}
+ renderWx();renderRecs();
+}
+function wxCtx(){
+ const w=S.wx;if(!w)return null;
+ const daily=(w.tmax!=null&&w.tmin!=null)?(w.tmax+w.tmin)/2:w.feels;
+ const t=Math.round((w.feels*0.55+daily*0.45)*10)/10;
+ const rain=isWet(w.code)||(w.precip>0.1)||(w.pop!=null&&w.pop>=55)||isSnow(w.code);
+ return {t,rain,snow:isSnow(w.code),swing:(w.tmax!=null&&w.tmin!=null)?w.tmax-w.tmin:0,windLv:beaufort(w.wind||0),uv:w.uv||0};
+}
+function getBand(t){
+ if(t>=28)return{k:'hot',l:'炎热',top:1,bottom:1,outer:1,mode:'none',shoes:1,tip:'天气炎热，选轻薄透气的单品，注意防晒'};
+ if(t>=23)return{k:'warm',l:'温暖',top:1.3,bottom:1.6,outer:1,mode:'none',shoes:1.5,tip:'温暖舒适，单穿即可'};
+ if(t>=18)return{k:'mild',l:'舒适',top:2,bottom:2,outer:2,mode:'opt',shoes:2,tip:'温度宜人，可备一件薄外套'};
+ if(t>=12)return{k:'cool',l:'微凉',top:2.3,bottom:2.3,outer:2.8,mode:'req',shoes:2,tip:'有点凉，需要加一件外套'};
+ if(t>=5)return{k:'cold',l:'寒冷',top:3,bottom:2.8,outer:3.8,mode:'req',shoes:3,tip:'天气寒冷，厚外套保暖'};
+ return{k:'freeze',l:'严寒',top:3.5,bottom:3.2,outer:4.8,mode:'req',shoes:3.5,tip:'严寒天气，羽绒服+围巾帽子'};
+}
+/* ===== 推荐算法 ===== */
+function buildCtx(){
+ const w=wxCtx();if(!w)return null;
+ const o=OCC[S.occ];let t=w.t;if(o.indoor)t=Math.max(t,21);
+ const band=getBand(t);band.t=t;
+ let mode=band.mode,outerProb=.55;
+ if(!o.indoor){
+  if(mode==='opt'&&w.swing>=8)outerProb=.8;
+  if(mode==='opt'&&o.formal)outerProb=.85;
+  if(mode==='none'&&o.formal===2&&t<27){mode='opt';outerProb=.6}
+  if(mode==='none'&&w.rain&&t<26){mode='opt';outerProb=.5}
+  if(mode==='none'&&o.outdoor){mode='opt';outerProb=.5}
+  if(mode==='none'&&w.windLv>=6&&t<26)mode='opt';
+ }else{if(w.t<12){mode='opt';outerProb=.6}else mode='none'}
+ const month=new Date().getMonth()+1;
+ const season=w.t>=25?'夏':w.t<10?'冬':(month>=2&&month<=7?'春':'秋');
+ const today=todayStr(),yest=addDays(today,-1);
+ const yl=S.logs.find(l=>l.date===yest);
+ return {prefStyles:S.prefStyles||[],o,occ:S.occ,band,mode,outerProb,rain:w.rain&&!o.indoor,snow:w.snow,w,season,today,yest,yIds:yl?yl.ids:[]};
+}
+const SHORT=['短裤','短裙','背心/吊带','凉鞋','拖鞋'];
+function scoreItem(it,c){
+ const o=c.o,b=c.band,s=slotOf(it);let sc=0;
+ const occs=it.occasions||[];
+ if(occs.includes(c.occ))sc+=4;else if(occs.length)sc-=1.2;
+ sc+=(o.st[it.style]||0)*1.2;
+ if(o.bad.includes(it.style))sc-=6;
+ if(o.pref.includes(it.sub))sc+=1.5;
+ if(o.avoid.includes(it.sub))sc-=7;
+ if(o.styleReq&&s!=='acc'&&it.style!==o.styleReq&&!o.pref.includes(it.sub))sc-=3;
+ const tw=s==='top'?b.top:s==='bottom'?b.bottom:s==='one'?(b.top+b.bottom)/2:s==='outer'?b.outer:s==='shoes'?b.shoes:null;
+ if(tw)sc-=Math.abs((it.warmth||2)-tw)*(s==='shoes'?1:1.6);
+ if(s==='acc'){
+  if(it.sub==='围巾')sc+=b.t<8?4:b.t<14?.5:-9;
+  if(it.sub==='帽子'&&b.t<3)sc+=2;
+  if(it.sub==='雨伞')sc+=(c.rain&&!o.avoid.includes('雨伞'))?9:-12;
+  if(it.sub==='眼镜'&&c.w.uv>=6&&!o.indoor)sc+=1.5;
+ }
+ if(SHORT.includes(it.sub)&&!(o.indoor&&it.sub==='拖鞋'))sc+=b.t>=26?1.5:b.t>=22?0:b.t>=16?-3:-8;
+ if(it.sub==='靴子')sc+=b.t<10?1.5:b.t<18?0:-4;
+ if(it.sub==='羽绒服'&&b.t>8)sc-=6;
+ if(it.seasons&&it.seasons.length&&it.seasons.length<4){if(it.seasons.includes(c.season))sc+=.8;else sc-=1.5}
+ if(c.rain){
+  if(it.waterproof&&(s==='outer'||s==='shoes'))sc+=2.5;
+  if(/麂皮|绒面|真丝|丝绒|帆布|怕水/.test((it.notes||'')+(it.name||'')))sc-=3.5;
+  if((it.sub==='凉鞋'||it.sub==='拖鞋')&&b.t<26)sc-=2.5;
+  if(s==='shoes'&&it.color==='白色')sc-=1;
+ }
+ if(o.outdoor&&it.waterproof)sc+=1.5;
+ const lw=lastWorn(it);
+ if(!lw)sc+=1.2;else{const d=daysBetween(lw,c.today);if(d<=0)sc-=.5;else if(d===1)sc-=(s==='acc'||s==='shoes'||s==='outer')?1:4;else sc+=Math.min(d,14)/14*2}
+ sc-=Math.min((it.wears||[]).length,40)*.02;
+ if(c.prefStyles.length){const tg=it.styleTags||[];const m=tg.filter(x=>c.prefStyles.includes(x)).length;const wgt=s==='acc'?.5:1;if(m)sc+=(2.5+Math.min(m-1,2)*.6)*wgt;else if(tg.length)sc-=1.2*wgt}
+ if(it.fav)sc+=.6;
+ return sc;
+}
+function hueDist(a,b){const d=Math.abs(a-b)%360;return d>180?360-d:d}
+function harmony(items,c){
+ const cols=[...new Set(items.filter(i=>slotOf(i)!=='acc').map(i=>i.color).filter(x=>COLOR[x]))];
+ const br=cols.filter(x=>!COLOR[x].n);const party=c.o.bright||0;const formal=c.o.formal||0;
+ if(!br.length)return{sc:1+formal*.5,txt:cols.length>1?`${cols.slice(0,3).join('、')}都是百搭中性色，简洁耐看`:cols.length?`${cols[0]}系一身，干净利落`:''};
+ if(br.length===1)return{sc:2+party*.6-formal*.6,txt:`中性色打底，${br[0]}点缀，主次分明`};
+ if(br.length===2){const d=hueDist(COLOR[br[0]].h,COLOR[br[1]].h);
+  if(d<=45)return{sc:1.2-formal,txt:`${br.join('与')}同色系呼应，和谐统一`};
+  if(d>=140)return party>=2?{sc:1,txt:`${br.join('+')}撞色，派对上很吸睛`}:{sc:-3.5,txt:`${br.join('+')}对比较强`};
+  return{sc:-1+party*.8-formal,txt:`${br.join('与')}双色搭配`}}
+ return{sc:-3+party,txt:'色彩较丰富，注意主次'};
+}
+function missingHints(c){
+ const has=s=>S.items.some(i=>slotOf(i)===s);const hs=sub=>S.items.some(i=>sub.includes(i.sub));
+ const m=[];
+ if(!has('top')&&!has('one'))m.push('上衣');
+ if(!has('bottom')&&!has('one'))m.push('裤子或裙子');
+ if(c){
+  if(c.mode==='req'&&!has('outer'))m.push(`外套（今天${c.band.l}，需要加衣）`);
+  if(c.o.shoes&&!has('shoes'))m.push('鞋子');
+  if(c.o.shoeReq&&has('shoes')&&!hs(c.o.shoeReq))m.push(c.o.shoeReq.slice(0,2).join('或')+`（适合${c.occ}）`);
+  if(c.o.styleReq&&!S.items.some(i=>i.style===c.o.styleReq&&slotOf(i)!=='acc'))m.push(`${c.o.styleReq}风格的衣服（适合${c.occ}）`);
+  if(c.occ==='户外徒步'&&!S.items.some(i=>i.style==='户外功能'||i.waterproof))m.push('冲锋衣等户外功能装备');
+  if(c.occ==='居家'&&!S.items.some(i=>i.style==='居家'))m.push('家居服');
+  if(c.prefStyles.length&&!S.items.some(i=>(i.styleTags||[]).some(t=>c.prefStyles.includes(t))))m.push(`「${c.prefStyles.join('/')}」风格的单品（已先按天气和场景推荐）`);
+  if(c.rain&&!S.items.some(i=>i.sub==='雨伞'||(i.waterproof&&slotOf(i)==='outer')))m.push('雨伞或防水外套（今天有雨）');
+ }
+ return m;
+}
+function recommend(c,shuffle){
+ const pools={top:[],bottom:[],one:[],outer:[],shoes:[],acc:[]};
+ for(const it of S.items)pools[slotOf(it)].push({it,sc:scoreItem(it,c)});
+ for(const k in pools)pools[k].sort((a,b)=>b.sc-a.sc);
+ const hasTwo=pools.top.length&&pools.bottom.length,hasOne=pools.one.length;
+ if(!hasTwo&&!hasOne)return[];
+ const rnd=mulberry32(S.seed);
+ const pick=(pool,k=6,T=1.6)=>{const cc=pool.slice(0,k);if(!cc.length)return null;const mx=cc[0].sc;const w=cc.map(x=>Math.exp((x.sc-mx)/T));let r=rnd()*w.reduce((a,b)=>a+b,0);for(let i=0;i<cc.length;i++){r-=w[i];if(r<=0)return cc[i]}return cc[cc.length-1]};
+ const oneBest=hasOne?pools.one[0].sc:-99,twoBest=hasTwo?(pools.top[0].sc+pools.bottom[0].sc)/2:-99;
+ const cands=new Map();const yset=new Set(c.yIds);
+ for(let i=0;i<400;i++){
+  let parts=[];
+  const useOne=hasOne&&(!hasTwo||rnd()<(oneBest>twoBest+1?.65:oneBest>twoBest-2?.35:.12));
+  if(useOne)parts.push(pick(pools.one));else parts.push(pick(pools.top),pick(pools.bottom));
+  if(c.mode!=='none'&&pools.outer.length){const p=pick(pools.outer,5);if(c.mode==='req'||(p.sc>0.5&&rnd()<c.outerProb))parts.push(p)}
+  if(pools.shoes.length){const p=pick(pools.shoes,5);if(c.o.shoes||p.sc>3)parts.push(p)}
+  const used=new Set();const acc=pools.acc.filter(a=>a.sc>1);
+  for(const a of acc)if((a.it.sub==='雨伞'&&c.rain&&!c.o.avoid.includes('雨伞'))||(a.it.sub==='围巾'&&c.band.t<8)){if(!used.has(a.it.sub)){parts.push(a);used.add(a.it.sub)}}
+  const rest=acc.filter(a=>!used.has(a.it.sub)&&a.sc>2);
+  if(rest.length&&rnd()<.7){const a=pick(rest,5);parts.push(a);used.add(a.it.sub);const r2=rest.filter(x=>!used.has(x.it.sub));if(r2.length&&used.size<2&&rnd()<.3)parts.push(pick(r2,4))}
+  parts=parts.filter(Boolean);
+  const key=parts.map(p=>p.it.id).sort().join('|');if(cands.has(key))continue;
+  const items=parts.map(p=>p.it);const h=harmony(items,c);
+  let score=parts.reduce((a,p)=>a+p.sc,0)+h.sc*1.5;
+  if(c.prefStyles.length){const mm=items.filter(x=>slotOf(x)!=='acc'&&(x.styleTags||[]).some(t=>c.prefStyles.includes(t))).length;if(mm>=2)score+=1.5}
+  const main=items.filter(x=>slotOf(x)!=='acc'&&slotOf(x)!=='shoes');
+  if(main.length&&main.every(x=>yset.has(x.id)))score-=12;
+  if(shuffle&&S.shown.has(key))score-=8;
+  score+=rnd()*(shuffle?3:1);
+  cands.set(key,{key,items,score,h,main:main.map(x=>x.id)});
+ }
+ const list=[...cands.values()].sort((a,b)=>b.score-a.score);const out=[];
+ while(out.length<3&&list.length){
+  let best=-1,bv=-1e9;
+  list.forEach((cd,i)=>{let ov=0;for(const o of out){const sh=cd.main.filter(x=>o.main.includes(x)).length;if(sh>=cd.main.length)ov+=100;ov+=sh}const v=cd.score-ov*3;if(v>bv){bv=v;best=i}});
+  if(best<0||bv<-200)break;out.push(list.splice(best,1)[0]);
+ }
+ out.forEach(o=>S.shown.add(o.key));
+ return out;
+}
+function reasonOf(of,c){
+ const its=of.items,b=c.band,t=Math.round(b.t);
+ const outer=its.find(i=>slotOf(i)==='outer'),one=its.find(i=>slotOf(i)==='one'),top=its.find(i=>slotOf(i)==='top'),bot=its.find(i=>slotOf(i)==='bottom'),shoe=its.find(i=>slotOf(i)==='shoes');
+ const r=[];
+ let w=c.o.indoor?'居家室内，以舒适放松为主':`今天${b.l}（体感约${t}°C）`;
+ if(outer)w+=c.mode==='req'?`，外搭${nameOf(outer)}保暖`:`，带上${nameOf(outer)}，早晚可穿可脱`;
+ else if(b.k==='hot'||b.k==='warm')w+='，单穿清爽不闷热';
+ r.push(w);
+ const base=one?nameOf(one):[top,bot].filter(Boolean).map(nameOf).join(' + ');
+ r.push(`${base}${shoe?'，配'+nameOf(shoe):''}${of.h.txt?'；'+of.h.txt:''}`);
+ r.push(`契合「${c.occ}」：${c.o.d}`);
+ if(c.prefStyles.length){const tc={};its.forEach(i=>(i.styleTags||[]).forEach(t=>{if(c.prefStyles.includes(t))tc[t]=(tc[t]||0)+1}));const top=Object.entries(tc).sort((a,b)=>b[1]-a[1]);if(top.length){const n=its.filter(i=>(i.styleTags||[]).some(t=>c.prefStyles.includes(t))).length;r.push(`风格：${top.slice(0,2).map(x=>x[0]).join('、')}，${n} 件单品符合你的偏好`)}}
+ let fresh=null,fd=-1;for(const i of its){if(slotOf(i)==='acc')continue;const lw=lastWorn(i);const d=lw?daysBetween(lw,c.today):999;if(d>fd&&d>=5){fd=d;fresh=i}}
+ if(fresh)r.push(fd>=999?`${nameOf(fresh)}还没穿过，给它一次出场机会`:`${nameOf(fresh)}已经${fd}天没穿了`);
+ if(c.rain){const wp=its.find(i=>i.waterproof&&slotOf(i)!=='acc');const um=its.find(i=>i.sub==='雨伞');r.push((wp?`${nameOf(wp)}防水，雨天更安心`:'今天可能下雨，避开怕水的麂皮/真丝单品')+(um?'，记得带上雨伞':'，出门带伞'))}
+ if(its.some(i=>i.sub==='围巾'))r.push('加条围巾，防风更暖和');
+ if(c.w.uv>=7&&!c.o.indoor&&b.t>=22)r.push('紫外线较强，注意防晒');
+ return r;
+}
+
+/* ===== 页面切换 ===== */
+function go(p){
+ if(p==='add'&&!S.editing)newForm(null);
+ S.page=p;$$('.page').forEach(x=>x.classList.toggle('on',x.id==='p-'+p));
+ $$('.tab').forEach(x=>x.classList.toggle('on',x.dataset.go===p));
+ window.scrollTo(0,0);
+ ({today:renderToday,closet:renderCloset,add:renderForm,stats:renderStats,settings:renderSettings})[p]();
+}
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){if(g.dataset.go==='add')S.editing=null;closeSheet();go(g.dataset.go)}});
+function refresh(){({today:renderToday,closet:renderCloset,stats:renderStats,settings:renderSettings,add:()=>{}})[S.page]()}
+
+/* ===== 今日搭配 ===== */
+function renderToday(){
+ const d=new Date();$('#todayDate').textContent=`${d.getMonth()+1}月${d.getDate()}日 星期${WEEK[d.getDay()]}`;
+ const tl=S.logs.find(l=>l.date===todayStr());$('#todayBadge').innerHTML=tl?'<span class="badge">✓ 今日已记录</span>':'';
+ $('#occChips').innerHTML=OCCS.map(o=>`<button class="chip big ${o===S.occ?'on':''}" data-occ="${o}">${OCC[o].i} ${o}</button>`).join('');
+ $('#occDesc').textContent=OCC[S.occ].d;
+ renderStyChips();
+ renderWx();renderRecs();
+}
+$('#occChips').addEventListener('click',e=>{const b=e.target.closest('[data-occ]');if(!b)return;S.occ=b.dataset.occ;LS.set('occ',S.occ);S.shown.clear();S.seed=Date.now()%100000;renderToday();const n=$(`[data-occ="${S.occ}"]`);n&&n.scrollIntoView&&n.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'})});
+function renderStyChips(){
+ const ps=S.prefStyles;
+ $('#styChips').innerHTML=`<button class="chip ${ps.length?'':'on'}" data-sty="">不限</button>`+STYLE_TAGS.map(t=>`<button class="chip ${ps.includes(t)?'on':''}" data-sty="${t}">${t}</button>`).join('');
+ $('#styDesc').textContent=ps.length?`已选 ${ps.join('、')}`:'可多选，不选则不限';
+}
+$('#styChips').addEventListener('click',e=>{const b=e.target.closest('[data-sty]');if(!b)return;const v=b.dataset.sty;
+ if(!v)S.prefStyles=[];else S.prefStyles=S.prefStyles.includes(v)?S.prefStyles.filter(x=>x!==v):[...S.prefStyles,v];
+ S.prefStyles.sort((a,b)=>STYLE_TAGS.indexOf(a)-STYLE_TAGS.indexOf(b));
+ LS.set('prefStyles',S.prefStyles);S.shown.clear();S.seed=Date.now()%100000;const sl=$('#styChips').scrollLeft;renderStyChips();$('#styChips').scrollLeft=sl;renderRecs()});
+function renderWx(){
+ const box=$('#wxBox');const st=S.wxState;
+ if(st==='locating'){box.innerHTML=`<div class="card wx"><div class="city">📍 正在定位…</div><div class="main"><div class="temp"><span class="spin"></span></div></div><div class="cond">获取位置后自动加载天气</div></div>`;return}
+ if(!S.city||st==='nocity'){box.innerHTML=`<div class="card"><div style="font-weight:700;font-size:16px;margin-bottom:4px">📍 先设置你所在的城市</div><div class="muted tiny" style="margin-bottom:12px">用于获取今日天气（Open-Meteo 免费天气服务）${canGeo()?'':'。本地文件模式下无法定位，请手动搜索城市'}</div><div class="row">${canGeo()?'<button class="btn grow" id="wxGeo">使用当前定位</button>':''}<button class="btn ${canGeo()?'ghost':''} grow" id="wxCity">搜索城市</button></div><button class="btn line block sm" style="margin-top:10px" id="wxManual">不联网：手动输入气温</button></div>`;return}
+ if(st==='loading'||st==='idle'){box.innerHTML=`<div class="card wx"><div class="city">📍 ${esc(S.city.name)}</div><div class="main"><div class="temp"><span class="spin"></span></div></div><div class="cond">正在获取天气…</div><div class="grid">${'<div><b>--</b>&nbsp;</div>'.repeat(4)}</div></div>`;return}
+ if(st==='err'||!S.wx){box.innerHTML=`<div class="card"><div style="font-weight:700">😕 天气获取失败</div><div class="muted tiny" style="margin:4px 0 12px">请检查网络后重试，或手动输入今天的气温</div><div class="row"><button class="btn grow" id="wxRetry">重试</button><button class="btn ghost grow" id="wxManual">手动输入</button><button class="btn line grow" id="wxCity">换城市</button></div></div>`;return}
+ const w=S.wx,c=wxCtx(),b=getBand(c.t);const [cn,ic]=w.manual?[w.code===61?'手动设置 · 有雨':'手动设置','🌡️']:(WMO[w.code]||['未知','🌡️']);
+ const tip=[b.tip];if(c.rain)tip.push(c.snow?'有雪，注意防滑保暖':'可能有雨，记得带伞');if(c.swing>=10)tip.push(`昼夜温差${Math.round(c.swing)}°C`);if(c.windLv>=5)tip.push(`风大（${c.windLv}级）`);
+ box.innerHTML=`<div class="card wx"><div class="city">📍 ${esc(S.city.name)}<button id="wxCity">切换</button>${w.manual?'<button id="wxManual">修改</button>':'<button id="wxRetry">刷新</button>'}${w.stale?'<span class="tiny">（缓存）</span>':''}</div>
+ <div class="main"><div><div class="temp">${Math.round(w.temp)}<sup>°C</sup></div><div class="cond">${cn}${w.tmax!=null?` · ${Math.round(w.tmin)}° / ${Math.round(w.tmax)}°`:''}</div></div><div class="ico">${ic}</div></div>
+ <div class="grid"><div><b>${Math.round(w.feels)}°</b>体感</div><div><b>${w.pop!=null?w.pop+'%':(w.precip||0)+'mm'}</b>${w.pop!=null?'降水概率':'降水量'}</div><div><b>${w.manual?'--':beaufort(w.wind||0)+'级'}</b>风力${w.manual?'':' '+Math.round(w.wind)+'km/h'}</div><div><b>${w.hum!=null?w.hum+'%':'--'}</b>湿度</div></div>
+ <div class="tip">👔 ${tip.join('；')}</div></div>`;
+}
+$('#wxBox').addEventListener('click',e=>{const id=e.target.id;
+ if(id==='wxCity')openCitySheet();else if(id==='wxRetry')loadWeather(true);else if(id==='wxGeo')locate();
+ else if(id==='wxManual'){const v=prompt('请输入今天的大致气温（°C）',S.wx?Math.round(S.wx.temp):'20');if(v==null)return;const t=parseFloat(v);if(isNaN(t))return toast('请输入数字');const rain=confirm('今天会下雨吗？\n确定 = 有雨，取消 = 无雨');S.wx={manual:true,temp:t,feels:t,tmax:null,tmin:null,precip:rain?1:0,code:rain?61:1,wind:0,pop:null,hum:null};if(!S.city||S.city.manual){S.city={name:'手动设置',manual:true};LS.set('city',S.city)}S.wxState='ok';LS.set('manualWx',S.wx);renderWx();renderRecs()}});
+function renderRecs(){
+ const box=$('#recBox');
+ if(!S.items.length){box.innerHTML=`<div class="card empty"><div class="e">👚</div><div style="font-weight:700;color:var(--ink);margin-bottom:4px">衣橱还是空的</div><div class="tiny" style="margin-bottom:14px">拍照添加你的衣服，或先加载示例衣物体验一下</div><div class="row"><button class="btn grow" data-go="add">📷 添加衣物</button><button class="btn ghost grow" id="loadDemo2">加载示例衣物</button></div></div>`;return}
+ if(S.wxState!=='ok'||!S.wx){box.innerHTML=S.wxState==='loading'?'<div class="card skel" style="height:260px"></div>':'<div class="card empty tiny">设置城市或手动输入气温后，这里会给出今日搭配建议</div>';return}
+ const c=buildCtx();const miss=missingHints(c);
+ S.recs=recommend(c,S._shuffle);S._shuffle=false;
+ let h='';
+ if(miss.length)h+=`<div class="hint">💡 衣橱里还缺：<b>${miss.join('、')}</b>。添加后推荐会更准确。 <button class="btn sm warn" data-go="add" style="height:26px;padding:0 10px">去添加</button></div>`;
+ if(!S.recs.length){box.innerHTML=h+`<div class="card empty"><div class="e">🤔</div>暂时凑不出完整搭配<br>至少需要「上衣 + 裤子/裙子」或「连衣裙/套装」</div>`;return}
+ const tl=S.logs.find(l=>l.date===todayStr());const ord='one top outer bottom shoes acc';
+ h+=S.recs.map((of,i)=>{
+  const done=tl&&tl.key===of.key;const its=[...of.items].sort((a,b)=>ord.indexOf(slotOf(a))-ord.indexOf(slotOf(b)));
+  return `<div class="card of ${done?'done':''}"><div class="of-h"><b>方案${'一二三'[i]}</b><span>${of.h.sc>=1.5?'<span class="badge">配色和谐</span> ':''}<span class="badge o">${OCC[c.occ].i} ${c.occ}</span></span></div>
+  <div class="of-items ${its.length===2||its.length===4?'n2':''}">${its.map(it=>`<button class="of-it" data-item="${it.id}">${imgHTML(it)}<span>${esc(nameOf(it))}</span></button>`).join('')}</div>
+  <div class="reason">${reasonOf(of,c).map(x=>`<p>· ${esc(x)}</p>`).join('')}</div>
+  <button class="btn block ${done?'ghost':''}" data-wear="${i}">${done?'✓ 今天穿的就是这套':'👍 就穿这套'}</button></div>`}).join('');
+ h+=`<button class="btn line block" id="shuffle">🔀 换一套</button><div class="tiny muted" style="text-align:center;margin-top:10px">基于衣橱里的 ${S.items.length} 件衣物 · 综合温度、场景、配色与穿着频率</div>`;
+ box.innerHTML=h;
+}
+$('#recBox').addEventListener('click',async e=>{
+ const t=e.target.closest('button');if(!t)return;
+ if(t.id==='shuffle'){S.seed=(S.seed*7+13)%1000003;S._shuffle=true;renderRecs();window.scrollTo({top:$('#recBox').offsetTop-70,behavior:'smooth'});toast('已换一批搭配');return}
+ if(t.id==='loadDemo2'){loadDemo();return}
+ if(t.dataset.item){openDetail(t.dataset.item);return}
+ if(t.dataset.wear!=null){const of=S.recs[+t.dataset.wear];await logOutfit(of.items.map(i=>i.id),of.key);toast('已记录今日穿搭，穿着次数 +1 ✨');renderToday()}
+});
+async function logOutfit(ids,key){
+ const td=todayStr();const prev=S.logs.find(l=>l.date===td);const changed=[];
+ if(prev)for(const id of prev.ids){if(ids.includes(id))continue;const it=byId(id);if(it){it.wears=(it.wears||[]).filter(d=>d!==td);changed.push(it)}}
+ for(const id of ids){const it=byId(id);if(it&&!(it.wears||[]).includes(td)){it.wears=[...(it.wears||[]),td];changed.push(it)}}
+ const log={date:td,ids,key,occ:S.occ,ts:Date.now()};
+ S.logs=S.logs.filter(l=>l.date!==td).concat(log);
+ await DB.putMany('items',changed);await DB.put('logs',log);
+}
+
+/* ===== 定位 / 城市 ===== */
+function canGeo(){return !!navigator.geolocation&&window.isSecureContext&&location.protocol!=='file:'}
+function locate(){
+ if(!canGeo()){toast('当前环境不支持定位，请手动搜索城市');openCitySheet();return}
+ S.wxState='locating';renderWx();
+ navigator.geolocation.getCurrentPosition(async p=>{
+  const lat=+p.coords.latitude.toFixed(3),lon=+p.coords.longitude.toFixed(3);let name='当前位置';
+  try{const r=await fetchJSON(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=zh`,5000);name=r.city||r.locality||r.principalSubdivision||name}catch(e){}
+  setCity({name,lat,lon,auto:true});
+ },err=>{console.warn('定位失败',err.message);toast(err.code===1?'定位权限被拒绝，请手动搜索城市':'定位失败，请手动搜索城市');S.wxState=S.city?'idle':'nocity';if(S.city)loadWeather();else renderWx();openCitySheet()},{timeout:10000,maximumAge:30*60e3});
+}
+function setCity(c){S.city=c;LS.set('city',c);closeSheet();loadWeather(true);if(S.page==='settings')renderSettings()}
+function openCitySheet(){
+ openSheet('选择城市',`<div class="search"><span>🔍</span><input id="cityQ" placeholder="输入城市名，如：杭州、成都" enterkeyhint="search"></div>
+ <div class="row" style="margin-bottom:12px"><button class="btn grow" id="citySearch">搜索</button>${canGeo()?'<button class="btn ghost grow" id="cityGeo">📍 使用当前定位</button>':''}</div>
+ ${canGeo()?'':'<div class="hint g">本地文件模式下浏览器不允许定位，请输入城市名搜索。通过 https 链接打开时可自动定位。</div>'}
+ <div id="cityRes"></div>`);
+}
+async function searchCity(){
+ const q=$('#cityQ').value.trim();if(!q)return;const box=$('#cityRes');box.innerHTML='<div class="empty"><span class="spin d"></span></div>';
+ try{const d=await fetchJSON(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=10&language=zh&format=json`);
+  const rs=d.results||[];S._cityRes=rs;
+  box.innerHTML=rs.length?rs.map((r,i)=>`<button class="res" data-ci="${i}"><b>${esc(r.name)}</b><span>${esc([r.admin2,r.admin1,r.country].filter(Boolean).join(' · '))}</span></button>`).join(''):'<div class="empty">没有找到该城市，换个写法试试（如“上海”或“Shanghai”）</div>';
+ }catch(e){box.innerHTML='<div class="empty">搜索失败，请检查网络</div>'}
+}
+$('#shBody').addEventListener('click',e=>{
+ const t=e.target.closest('button');if(!t)return;
+ if(t.id==='citySearch')searchCity();else if(t.id==='cityGeo'){closeSheet();locate()}
+ else if(t.dataset.ci!=null){const r=S._cityRes[+t.dataset.ci];setCity({name:r.name,admin:r.admin1||'',lat:+r.latitude.toFixed(3),lon:+r.longitude.toFixed(3)});toast('已切换到 '+r.name)}
+});
+$('#shBody').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='cityQ')searchCity()});
+function openSheet(title,html){$('#shTitle').textContent=title;$('#shBody').innerHTML=html;$('#shBody').scrollTop=0;$('#mask').classList.add('on');$('#sheet').classList.add('on')}
+function closeSheet(){$('#mask').classList.remove('on');$('#sheet').classList.remove('on')}
+$('#mask').onclick=closeSheet;$('#shClose').onclick=closeSheet;
+/* ===== 衣橱 ===== */
+function renderCloset(){
+ const f=S.filter;const cats=['全部',...Object.keys(CATS)];
+ const cnt=c=>c==='全部'?S.items.length:S.items.filter(i=>i.cat===c).length;
+ $('#catChips').innerHTML=cats.map(c=>`<button class="chip ${f.cat===c?'on':''}" data-cat="${c}">${c==='全部'?'':CAT_ICON[c]+' '}${c} <span style="opacity:.6">${cnt(c)}</span></button>`).join('');
+ const sel=(k,label,opts)=>`<select data-f="${k}" class="${f[k]?'on':''}" aria-label="${label}"><option value="">${label}</option>${opts.map(o=>`<option ${f[k]===o?'selected':''}>${o}</option>`).join('')}</select>`;
+ $('#filters').innerHTML=sel('season','季节',SEASONS)+sel('occ','场景',OCCS)+sel('color','颜色',COLORS.map(c=>c[0]))+sel('tag','风格',STYLE_TAGS)+`<select data-f="sort" aria-label="排序" class="${f.sort!=='new'?'on':''}">${[['new','最新添加'],['most','最常穿'],['least','最少穿'],['old','最久没穿'],['price','价格最高']].map(([v,l])=>`<option value="${v}" ${f.sort===v?'selected':''}>${l}</option>`).join('')}</select>`;
+ const q=f.q.trim().toLowerCase();
+ let list=S.items.filter(i=>(f.cat==='全部'||i.cat===f.cat)&&(!f.season||(i.seasons||[]).includes(f.season))&&(!f.occ||(i.occasions||[]).includes(f.occ))&&(!f.color||i.color===f.color)&&(!f.tag||(i.styleTags||[]).includes(f.tag))&&(!q||[i.name,i.sub,i.cat,i.brand,i.notes,i.color,i.style,(i.styleTags||[]).join(' ')].join(' ').toLowerCase().includes(q)));
+ const W=i=>(i.wears||[]).length;
+ const sorters={new:(a,b)=>(b.created||0)-(a.created||0),most:(a,b)=>W(b)-W(a),least:(a,b)=>W(a)-W(b),old:(a,b)=>(lastWorn(a)||'0').localeCompare(lastWorn(b)||'0'),price:(a,b)=>(+b.price||0)-(+a.price||0)};
+ list.sort(sorters[f.sort]);
+ $('#closetSub').textContent=`共 ${S.items.length} 件${list.length!==S.items.length?`，筛选出 ${list.length} 件`:''}`;
+ $('#closetGrid').innerHTML=!S.items.length?`<div class="card empty"><div class="e">🧺</div><div style="margin-bottom:14px">还没有衣物，点击下方 ＋ 拍照添加</div><div class="row"><button class="btn grow" data-go="add">📷 添加第一件</button><button class="btn ghost grow" id="loadDemo3">加载示例衣物</button></div></div>`
+  :!list.length?`<div class="empty"><div class="e">🔎</div>没有符合条件的衣物<br><button class="btn sm ghost" id="clrF" style="margin-top:10px">清除筛选</button></div>`
+  :`<div class="grid2">${list.map(i=>`<button class="it" data-item="${i.id}"><div class="thumb">${imgHTML(i)}${i.fav?'<span class="fav">❤️</span>':''}<span class="wc">穿过 ${W(i)} 次</span></div><div class="meta"><div class="nm">${esc(nameOf(i))}</div><div class="sm"><i class="dot" style="background:${(COLOR[i.color]||{}).hex||'#ddd'}"></i>${esc(i.sub||i.cat)}${i.brand?' · '+esc(i.brand):''}</div></div></button>`).join('')}</div>`;
+}
+$('#catChips').addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(b){S.filter.cat=b.dataset.cat;renderCloset()}});
+$('#filters').addEventListener('change',e=>{const k=e.target.dataset.f;if(k){S.filter[k]=e.target.value;renderCloset()}});
+$('#q').addEventListener('input',e=>{S.filter.q=e.target.value;renderCloset()});
+$('#closetGrid').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.item)openDetail(b.dataset.item);else if(b.id==='clrF'){Object.assign(S.filter,{cat:'全部',season:'',occ:'',color:'',tag:'',q:''});$('#q').value='';renderCloset()}else if(b.id==='loadDemo3')loadDemo()});
+
+function openDetail(id){
+ const i=byId(id);if(!i)return;const W=(i.wears||[]).length,lw=lastWorn(i),td=todayStr();const wornToday=(i.wears||[]).includes(td);
+ const cpw=+i.price&&W?fmtMoney(i.price/W):'—';
+ openSheet(nameOf(i),`<div class="det-img">${imgHTML(i)}</div>
+ <div class="row" style="margin-bottom:14px"><button class="btn grow ${wornToday?'ghost':''}" data-act="wear">${wornToday?'✓ 今天穿了（点击取消）':'👕 今天穿了'}</button><button class="btn line" data-act="fav" style="width:52px" aria-label="收藏">${i.fav?'❤️':'🤍'}</button></div>
+ <div class="card"><dl class="kv">
+ <dt>分类</dt><dd>${esc(i.cat)} / ${esc(i.sub||'—')}${i.demo?' <span class="badge o">示例</span>':''}</dd>
+ <dt>颜色</dt><dd><i class="dot" style="background:${(COLOR[i.color]||{}).hex||'#ddd'}"></i> ${esc(i.color||'—')}</dd>
+ <dt>季节</dt><dd>${(i.seasons||[]).join('、')||'—'}</dd>
+ <dt>保暖度</dt><dd>${'🔥'.repeat(i.warmth||0)} ${WARM_L[i.warmth]||''}</dd>
+ <dt>风格标签</dt><dd>${(i.styleTags||[]).join('、')||'—'}</dd>
+ <dt>着装类型</dt><dd>${esc(i.style||'—')}${i.waterproof?' · 💧防水':''}</dd>
+ <dt>适合场景</dt><dd>${(i.occasions||[]).join('、')||'—'}</dd>
+ <dt>品牌</dt><dd>${esc(i.brand||'—')}</dd>
+ <dt>价格</dt><dd>${+i.price?fmtMoney(+i.price):'—'}</dd>
+ <dt>购买日期</dt><dd>${esc(i.buyDate||'—')}</dd>
+ <dt>穿着次数</dt><dd><b>${W}</b> 次 · 单次成本 ${cpw}</dd>
+ <dt>上次穿</dt><dd>${lw?`${lw}（${daysBetween(lw,td)===0?'今天':daysBetween(lw,td)+'天前'}）`:'从未穿过'}</dd>
+ ${i.notes?`<dt>备注</dt><dd>${esc(i.notes)}</dd>`:''}
+ </dl></div>
+ <div class="row"><button class="btn ghost grow" data-act="edit">✏️ 编辑</button><button class="btn danger grow" data-act="del">🗑 删除</button></div>`);
+ $('#shBody').querySelectorAll('[data-act]').forEach(b=>b.onclick=async()=>{
+  const a=b.dataset.act;
+  if(a==='wear'){i.wears=wornToday?(i.wears||[]).filter(d=>d!==td):[...(i.wears||[]),td];await DB.put('items',i);toast(wornToday?'已取消今日记录':'已记录，穿着次数 +1');openDetail(id);refresh()}
+  else if(a==='fav'){i.fav=!i.fav;await DB.put('items',i);openDetail(id);refresh()}
+  else if(a==='edit'){closeSheet();S.editing=id;newForm(i);go('add')}
+  else if(a==='del'){if(!confirm(`确定删除「${nameOf(i)}」吗？此操作不可恢复。`))return;await DB.del('items',id);S.items=S.items.filter(x=>x.id!==id);closeSheet();toast('已删除');refresh()}
+ });
+}
+
+/* ===== 添加 / 编辑 ===== */
+let F=null;
+function newForm(it){
+ F=it?JSON.parse(JSON.stringify(it)):{id:null,name:'',cat:'上衣',sub:'',color:'',seasons:[],warmth:2,occasions:[],style:'休闲',waterproof:false,brand:'',price:'',buyDate:'',notes:'',fav:false,photo:null,wears:[],styleTags:[]};
+ if(!F.styleTags)F.styleTags=[];
+ F._t=it?{w:1,st:1,se:1,oc:1}:{};F._detect=null;
+}
+function renderForm(){
+ if(!F)newForm(null);
+ $('#formTitle').textContent=F.id?'编辑衣物':'添加衣物';
+ const ch=(arr,sel,key,multi)=>arr.map(v=>`<button type="button" class="chip ${(multi?sel.includes(v):sel===v)?'on':''}" data-k="${key}" data-v="${v}">${v}</button>`).join('');
+ $('#formBox').innerHTML=`
+ <div class="f-photo"><div class="pv">${F.photo?`<img src="${F.photo}" alt="照片">`:`<div style="font-size:46px">📷</div><div>拍一张衣服的照片</div><div class="tiny">建议平铺或挂起，背景简洁，可自动识别颜色</div>`}</div>
+  <div class="acts"><button class="btn" type="button" id="bCam">📷 ${F.photo?'重拍':'拍照'}</button><button class="btn ghost" type="button" id="bAlb">🖼 从相册选</button>${F.photo?'<button class="btn line" type="button" id="bRmP" style="flex:0 0 52px" aria-label="移除照片">✕</button>':''}</div></div>
+ <div class="card">
+ <div class="fld"><span class="lbl">分类 <em>*</em></span><div class="chips">${Object.keys(CATS).map(c=>`<button type="button" class="chip ${F.cat===c?'on':''}" data-k="cat" data-v="${c}">${CAT_ICON[c]} ${c}</button>`).join('')}</div></div>
+ <div class="fld"><span class="lbl">细分类别 <span style="font-weight:400" class="tiny">（选择后自动填写推荐属性）</span></span><div class="chips">${ch(CATS[F.cat],F.sub,'sub')}</div></div>
+ <div class="fld"><span class="lbl">颜色</span><div class="sw">${COLORS.map(([n,h])=>`<button type="button" class="${F.color===n?'on':''}" data-k="color" data-v="${n}"><i style="background:${h}"></i>${n}</button>`).join('')}</div>${F._detect?`<div class="detect">🎨 已从照片识别主色：<b>${F._detect}</b>${F.color!==F._detect?`（<a href="#" id="useDet">使用</a>）`:''}</div>`:''}</div>
+ <div class="fld" style="margin:0"><label for="fName">名称（可选）</label><input class="inp" id="fName" data-b="name" placeholder="${esc((F.color||'')+(F.sub||F.cat))}" value="${esc(F.name)}" maxlength="30"></div>
+ </div>
+ <div class="card">
+ <div class="fld"><span class="lbl">适合季节 <a href="#" id="allSe" class="tiny" style="color:var(--pri);font-weight:400;margin-left:6px">四季通用</a></span><div class="chips">${ch(SEASONS,F.seasons,'seasons',1)}</div></div>
+ <div class="fld"><span class="lbl">保暖度</span><div class="warm">${[1,2,3,4,5].map(n=>`<button type="button" class="${F.warmth===n?'on':''}" data-k="warmth" data-v="${n}"><b>${n}</b>${WARM_L[n]}</button>`).join('')}</div></div>
+ <div class="fld"><span class="lbl">风格标签（可多选）</span><div class="chips">${ch(STYLE_TAGS,F.styleTags,'styleTags',1)}</div></div>
+ <div class="fld"><span class="lbl">着装类型 <span style="font-weight:400" class="tiny">（决定适合的场合）</span></span><div class="chips">${ch(STYLES,F.style,'style')}</div></div>
+ <div class="fld" style="margin:0"><span class="lbl">适合场景（可多选）</span><div class="chips">${OCCS.map(o=>`<button type="button" class="chip ${F.occasions.includes(o)?'on':''}" data-k="occasions" data-v="${o}">${OCC[o].i} ${o}</button>`).join('')}</div></div>
+ </div>
+ <div class="card">
+ <div class="two"><div class="fld"><label for="fBrand">品牌</label><input class="inp" id="fBrand" data-b="brand" value="${esc(F.brand)}" placeholder="如：优衣库" maxlength="30"></div>
+ <div class="fld"><label for="fPrice">价格（元）</label><input class="inp" id="fPrice" data-b="price" type="number" inputmode="decimal" min="0" step="0.01" value="${esc(F.price)}" placeholder="0"></div></div>
+ <div class="fld"><label for="fDate">购买日期</label><input class="inp" id="fDate" data-b="buyDate" type="date" value="${esc(F.buyDate)}" max="${todayStr()}"></div>
+ <div class="fld"><label for="fNotes">备注</label><textarea class="inp" id="fNotes" data-b="notes" placeholder="材质、尺码、洗护（如：麂皮怕水）…" maxlength="200">${esc(F.notes)}</textarea></div>
+ <div class="sw-row"><span>💧 防水 / 防雨</span><button type="button" class="tog ${F.waterproof?'on':''}" data-tog="waterproof" aria-label="防水"></button></div>
+ <div class="sw-row" style="margin:0"><span>❤️ 收藏</span><button type="button" class="tog ${F.fav?'on':''}" data-tog="fav" aria-label="收藏"></button></div>
+ </div>
+ <div class="sticky-save">${F.id?'<button class="btn line" type="button" id="bCancel">取消</button>':''}<button class="btn grow" type="button" id="bSave">${F.id?'保存修改':'✓ 保存到衣橱'}</button></div>`;
+}
+function applySubDefaults(){
+ const d=SUB_DEF[F.sub];if(!d)return;
+ if(!F._t.w)F.warmth=d[0];if(!F._t.st)F.style=d[1];if(!F._t.se)F.seasons=[...d[2]];if(!F._t.oc)F.occasions=d[3].split(',');
+ if(F.sub==='雨伞'||F.sub==='冲锋衣')F.waterproof=true;
+}
+$('#formBox').addEventListener('input',e=>{const k=e.target.dataset.b;if(k)F[k]=e.target.value});
+$('#formBox').addEventListener('click',async e=>{
+ const t=e.target.closest('button,a');if(!t)return;
+ if(t.tagName==='A')e.preventDefault();
+ if(t.id==='bCam')return $('#fileCam').click();
+ if(t.id==='bAlb')return $('#fileAlb').click();
+ if(t.id==='bRmP'){F.photo=null;F._detect=null;return renderForm()}
+ if(t.id==='bCancel'){S.editing=null;F=null;return go('closet')}
+ if(t.id==='bSave')return saveForm();
+ if(t.dataset.tog){F[t.dataset.tog]=!F[t.dataset.tog];t.classList.toggle('on');return}
+ const y=window.scrollY;
+ if(t.id==='useDet')F.color=F._detect;
+ else if(t.id==='allSe'){F.seasons=[...SEASONS];F._t.se=1}
+ else{const k=t.dataset.k,v=t.dataset.v;if(!k)return;
+  if(k==='cat'){if(F.cat!==v){F.cat=v;F.sub=''}}
+  else if(k==='sub'){F.sub=F.sub===v?'':v;applySubDefaults()}
+  else if(k==='color')F.color=F.color===v?'':v;
+  else if(k==='warmth'){F.warmth=+v;F._t.w=1}
+  else if(k==='style'){F.style=v;F._t.st=1}
+  else if(k==='styleTags'){const a=F.styleTags;F.styleTags=a.includes(v)?a.filter(x=>x!==v):[...a,v];F.styleTags.sort((a,b)=>STYLE_TAGS.indexOf(a)-STYLE_TAGS.indexOf(b))}
+  else if(k==='seasons'||k==='occasions'){const a=F[k];F[k]=a.includes(v)?a.filter(x=>x!==v):[...a,v];F._t[k==='seasons'?'se':'oc']=1;if(k==='seasons')F.seasons.sort((a,b)=>SEASONS.indexOf(a)-SEASONS.indexOf(b));else F.occasions.sort((a,b)=>OCCS.indexOf(a)-OCCS.indexOf(b))}
+ }
+ renderForm();window.scrollTo(0,y);
+});
+async function saveForm(){
+ if(!F.cat)return toast('请选择分类');
+ if(!F.photo&&!F.name.trim()&&!F.sub&&!F.color)return toast('请至少拍张照片，或选择细分类别/颜色');
+ const it={...F};delete it._t;delete it._detect;
+ it.name=(it.name||'').trim();it.price=it.price===''?'':Math.max(0,+it.price||0);
+ const isNew=!it.id;
+ if(isNew){it.id=uid();it.created=Date.now();it.wears=[]}
+ it.updated=Date.now();
+ try{await DB.put('items',it)}catch(e){console.error(e);return toast('保存失败：存储空间可能不足')}
+ const idx=S.items.findIndex(x=>x.id===it.id);if(idx>=0)S.items[idx]=it;else S.items.push(it);
+ if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+ toast(isNew?`已添加「${nameOf(it)}」到衣橱 🎉`:'已保存修改');
+ S.editing=null;newForm(null);
+ if(!isNew)go('closet');else{renderForm();window.scrollTo(0,0)}
+}
+async function handleFile(e){
+ const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
+ try{toast('正在处理照片…',1200);const {url,color}=await processImage(f);F.photo=url;F._detect=color;if(color&&!F.color)F.color=color;renderForm()}catch(err){console.error(err);toast('无法读取这张图片，请换一张')}
+}
+$('#fileCam').addEventListener('change',handleFile);$('#fileAlb').addEventListener('change',handleFile);
+function loadImg(src){return new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=src})}
+async function processImage(file){
+ const src=URL.createObjectURL(file);
+ try{const im=await loadImg(src);const MAX=800;let w=im.naturalWidth,h=im.naturalHeight;const s=Math.min(1,MAX/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);
+  const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,w,h);g.drawImage(im,0,0,w,h);
+  return{url:c.toDataURL('image/jpeg',.82),color:detectColor(c)}}finally{URL.revokeObjectURL(src)}
+}
+function detectColor(src){
+ const N=64,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d',{willReadFrequently:true});g.drawImage(src,0,0,N,N);
+ const d=g.getImageData(0,0,N,N).data;const px=(x,y)=>{const i=(y*N+x)*4;return[d[i],d[i+1],d[i+2]]};
+ let br=[0,0,0],bn=0;for(let i=0;i<N;i++)for(const p of[px(i,0),px(i,N-1),px(0,i),px(N-1,i)]){br[0]+=p[0];br[1]+=p[1];br[2]+=p[2];bn++}br=br.map(v=>v/bn);
+ const dist=(a,b)=>Math.sqrt((a[0]-b[0])**2*.3+(a[1]-b[1])**2*.59+(a[2]-b[2])**2*.11);
+ const buckets=new Map();
+ for(let y=Math.floor(N*.15);y<N*.85;y++)for(let x=Math.floor(N*.15);x<N*.85;x++){const p=px(x,y);if(dist(p,br)<28)continue;const k=(p[0]>>5)+','+(p[1]>>5)+','+(p[2]>>5);const b=buckets.get(k)||{n:0,r:0,g:0,b:0};b.n++;b.r+=p[0];b.g+=p[1];b.b+=p[2];buckets.set(k,b)}
+ let best=null;for(const b of buckets.values())if(!best||b.n>best.n)best=b;
+ if(!best||best.n<20){const p=px(N>>1,N>>1);best={n:1,r:p[0],g:p[1],b:p[2]}}
+ const rgb=[best.r/best.n,best.g/best.n,best.b/best.n];
+ let bc=null,bd=1e9;for(const [n,h] of COLORS){if(n==='银色'||n==='金色')continue;const q=[1,3,5].map(i=>parseInt(h.substr(i,2),16));const dd=dist(rgb,q);if(dd<bd){bd=dd;bc=n}}
+ return bc;
+}
+
+/* ===== 统计 ===== */
+function bars(entries,colorFn){const mx=Math.max(1,...entries.map(e=>e[1]));return `<div class="bars">${entries.map(([k,v])=>`<div class="b"><span>${esc(k)}</span><div class="tr"><div class="fl" style="width:${v/mx*100}%;background:${colorFn?colorFn(k):'var(--pri)'}"></div></div><span class="n">${v}</span></div>`).join('')}</div>`}
+function donut(entries,colorFn,unit='件'){
+ const tot=entries.reduce((a,e)=>a+e[1],0)||1;let acc=0;const R=52,C=2*Math.PI*R;
+ const segs=entries.map(([k,v])=>{const len=v/tot*C;const s=`<circle r="${R}" cx="70" cy="70" fill="none" stroke="${colorFn(k)}" stroke-width="22" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-acc}" transform="rotate(-90 70 70)"/>`;acc+=len;return s}).join('');
+ return `<div class="donut"><svg width="140" height="140" viewBox="0 0 140 140" style="flex:none"><circle r="${R}" cx="70" cy="70" fill="none" stroke="#f0eee8" stroke-width="22"/>${segs}<text x="70" y="68" text-anchor="middle" font-size="22" font-weight="800" fill="#1d2321">${tot}</text><text x="70" y="86" text-anchor="middle" font-size="11" fill="#6b736f">${unit}</text></svg><div class="legend">${entries.map(([k,v])=>`<div><i class="dot" style="background:${colorFn(k)}"></i>${esc(k)} <span class="muted">${v}</span></div>`).join('')}</div></div>`;
+}
+const PALETTE=['#1f7a6d','#ff7a59','#f2cb3d','#5b8def','#a77bd8','#3fb68b','#e86a92','#8d6e63','#90a4ae','#26c6da'];
+function renderStats(){
+ const box=$('#statsBox');const its=S.items;
+ if(!its.length){box.innerHTML=`<div class="card empty"><div class="e">📊</div>添加衣物后这里会显示统计<br><button class="btn ghost sm" style="margin-top:12px" id="loadDemo4">加载示例衣物</button></div>`;return}
+ const W=i=>(i.wears||[]).length;const total=its.reduce((a,i)=>a+(+i.price||0),0);const wearsTot=its.reduce((a,i)=>a+W(i),0);
+ const never=its.filter(i=>!W(i));const td=todayStr();
+ const count=(fn,keys)=>{const m=new Map(keys.map(k=>[k,0]));its.forEach(i=>[].concat(fn(i)).forEach(k=>{if(k&&m.has(k))m.set(k,m.get(k)+1)}));return[...m.entries()].filter(e=>e[1]>0)};
+ const catE=count(i=>i.cat,Object.keys(CATS));
+ const colE=count(i=>i.color,COLORS.map(c=>c[0])).sort((a,b)=>b[1]-a[1]);
+ const seaE=count(i=>i.seasons||[],SEASONS);const occE=count(i=>i.occasions||[],OCCS);
+ const styE=count(i=>i.style,STYLES).sort((a,b)=>b[1]-a[1]);
+ const tagE=count(i=>i.styleTags||[],STYLE_TAGS).sort((a,b)=>b[1]-a[1]);
+ const most=[...its].filter(W).sort((a,b)=>W(b)-W(a)).slice(0,5);
+ const least=[...its].filter(W).sort((a,b)=>W(a)-W(b)||(lastWorn(a)||'').localeCompare(lastWorn(b)||'')).slice(0,5);
+ const cpw=[...its].filter(i=>+i.price&&W(i)).sort((a,b)=>b.price/W(b)-a.price/W(a)).slice(0,3);
+ const catTotal=Object.keys(CATS).map(c=>[c,Math.round(its.filter(i=>i.cat===c).reduce((a,i)=>a+(+i.price||0),0))]).filter(e=>e[1]>0);
+ const priced=its.filter(i=>+i.price).length;
+ const t=S.statTab;
+ const rank=(arr,fn)=>arr.length?arr.map((i,n)=>`<button class="rank" style="width:100%;text-align:left" data-item="${i.id}"><b style="width:18px;color:var(--mute)">${n+1}</b><div class="thumb">${imgHTML(i)}</div><div class="grow"><div class="nm">${esc(nameOf(i))}</div><div class="tiny muted">${fn(i)}</div></div></button>`).join(''):'<div class="muted tiny" style="padding:8px 0">暂无数据</div>';
+ const logs=[...S.logs].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,7);
+ box.innerHTML=`<div class="kpis"><div class="kpi p"><b>${its.length}</b><span>衣物总数（件）</span></div><div class="kpi"><b>${fmtMoney(total)}</b><span>衣橱总价值</span></div><div class="kpi"><b>${wearsTot}</b><span>累计穿着次数</span></div><div class="kpi"><b style="color:${never.length?'var(--acc)':'inherit'}">${never.length}</b><span>从未穿过</span></div></div>
+ <div class="card"><div class="seg">${[['cat','分类'],['color','颜色'],['season','季节'],['occ','场景'],['tag','风格'],['style','类型']].map(([k,l])=>`<button data-st="${k}" class="${t===k?'on':''}">${l}</button>`).join('')}</div>
+ ${t==='cat'?donut(catE,k=>PALETTE[Object.keys(CATS).indexOf(k)]):t==='color'?donut(colE,k=>COLOR[k].hex):t==='season'?bars(seaE,k=>({春:'#7cc47f',夏:'#ff9f59',秋:'#d4a24c',冬:'#6fa8dc'})[k]):t==='occ'?bars(occE):t==='tag'?(tagE.length?bars(tagE,k=>PALETTE[STYLE_TAGS.indexOf(k)%PALETTE.length]):'<div class="muted tiny">还没有给衣物添加风格标签</div>'):bars(styE,k=>PALETTE[STYLES.indexOf(k)])}
+ ${t==='season'||t==='occ'||t==='tag'?'<div class="tiny muted" style="margin-top:6px">一件衣物可同时属于多个季节/场景/风格</div>':''}</div>
+ ${catTotal.length?`<div class="sec-t">各类花费（元） <small>平均单价 ${fmtMoney(total/Math.max(1,priced))}</small></div><div class="card">${bars(catTotal,k=>PALETTE[Object.keys(CATS).indexOf(k)])}</div>`:''}
+ <div class="sec-t">最常穿 TOP5</div><div class="card" style="padding:6px 16px">${rank(most,i=>`穿过 ${W(i)} 次 · 上次 ${lastWorn(i)}`)}</div>
+ <div class="sec-t">穿得最少 <small>穿过但很少穿</small></div><div class="card" style="padding:6px 16px">${rank(least,i=>`仅穿过 ${W(i)} 次 · ${daysBetween(lastWorn(i),td)} 天前`)}</div>
+ <div class="sec-t">从未穿过 <small>${never.length} 件，穿一穿或考虑断舍离</small></div><div class="card">${never.length?`<div class="hscroll">${never.map(i=>`<button class="mi" data-item="${i.id}"><div class="mini">${imgHTML(i)}</div>${esc(nameOf(i))}</button>`).join('')}</div>`:'<div class="muted tiny">太棒了，每件衣服都穿过 👏</div>'}</div>
+ ${cpw.length?`<div class="sec-t">单次穿着成本最高 <small>多穿才划算</small></div><div class="card" style="padding:6px 16px">${rank(cpw,i=>`${fmtMoney(+i.price)} ÷ ${W(i)} 次 = ${fmtMoney(i.price/W(i))}/次`)}</div>`:''}
+ <div class="sec-t">最近穿搭记录</div><div class="card" style="padding:6px 16px">${logs.length?logs.map(l=>`<div class="hist"><span class="d">${l.date.slice(5)}<br>${esc(l.occ||'')}</span>${l.ids.map(byId).filter(Boolean).map(i=>`<button class="mini" data-item="${i.id}">${imgHTML(i)}</button>`).join('')}</div>`).join(''):'<div class="muted tiny" style="padding:8px 0">在「今日搭配」点“就穿这套”后会记录在这里</div>'}</div>`;
+}
+$('#statsBox').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.st){S.statTab=b.dataset.st;renderStats()}else if(b.dataset.item)openDetail(b.dataset.item);else if(b.id==='loadDemo4')loadDemo()});
+/* ===== 设置 ===== */
+let deferredPrompt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(S.page==='settings')renderSettings()});
+async function renderSettings(){
+ const demoN=S.items.filter(i=>i.demo).length;
+ const li=(id,ic,t,s,cls='')=>`<button class="li ${cls}" id="${id}"><span class="ic">${ic}</span><span class="grow"><b>${t}</b><span>${s}</span></span><span class="arr">›</span></button>`;
+ const standalone=IS_APP||matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+ $('#setBox').innerHTML=`
+ <div class="sec-t" style="margin-top:4px">位置与天气</div>
+ <div class="list">${li('sCity','📍','城市',S.city?esc(S.city.name)+(S.city.admin?' · '+esc(S.city.admin):''):'未设置，点击搜索城市')}${canGeo()?li('sGeo','🛰️','使用当前定位','自动获取所在位置的天气'):''}</div>
+ <div class="sec-t">穿搭偏好</div>
+ <div class="list">${li('sStyle','🎨','默认风格偏好',(LS.get('defStyles',[])).join('、')||'不限')}</div>
+ <div class="sec-t">数据备份</div>
+ <div class="list">${li('sExport','📤','导出备份','把衣物（含照片）和穿搭记录保存为 JSON 文件')}${li('sImport','📥','导入备份','从 JSON 备份文件恢复数据')}</div>
+ <div class="sec-t">示例数据</div>
+ <div class="list">${li('sDemo','✨','加载示例衣物',`添加 ${DEMO.length} 件标有「示例」的衣物，快速体验`)}${demoN?li('sDemoDel','🧹','删除示例衣物',`当前有 ${demoN} 件示例衣物，你自己的衣物不受影响`):''}</div>
+ ${standalone?'':`<div class="sec-t">添加到手机桌面</div><div class="card tiny" style="line-height:1.8">${deferredPrompt?'<button class="btn block" id="sInstall" style="margin-bottom:10px">📲 安装到手机桌面</button>':''}<b>iPhone：</b>用 Safari 打开 → 点底部「分享」→「添加到主屏幕」<br><b>安卓：</b>用 Chrome 打开 → 右上角菜单 →「添加到主屏幕 / 安装应用」</div>`}
+ <div class="sec-t">危险操作</div>
+ <div class="list">${li('sClear','⚠️','清空全部数据','删除所有衣物、照片和穿搭记录','red')}</div>
+ <div class="card tiny muted" style="line-height:1.8">📦 共 ${S.items.length} 件衣物，${S.logs.length} 条穿搭记录<span id="sQuota"></span><br>🔒 所有数据（包括照片）只保存在${IS_APP?'本应用内':'本机浏览器里'}，不会上传。${IS_APP?'卸载应用会删除数据':''}换手机或清理浏览器数据前，请先导出备份。<br>🌤 天气与城市搜索数据来自 Open-Meteo。<br>衣橱搭配 v1.0</div>`;
+ if(navigator.storage&&navigator.storage.estimate){try{const e=await navigator.storage.estimate();const q=$('#sQuota');if(q&&e.usage)q.textContent=`，已用存储约 ${(e.usage/1048576).toFixed(1)} MB`}catch(e){}}
+}
+$('#setBox').addEventListener('click',async e=>{
+ const b=e.target.closest('button');if(!b)return;
+ switch(b.id){
+  case 'sCity':openCitySheet();break;
+  case 'sStyle':openStyleSheet();break;
+  case 'sGeo':go('today');locate();break;
+  case 'sExport':exportData();break;
+  case 'sImport':$('#fileImport').click();break;
+  case 'sDemo':loadDemo();break;
+  case 'sDemoDel':if(confirm('删除所有示例衣物？你自己添加的衣物不受影响。')){const ids=new Set(S.items.filter(i=>i.demo).map(i=>i.id));for(const id of ids)await DB.del('items',id);S.items=S.items.filter(i=>!i.demo);for(const l of S.logs){if(l.ids.some(id=>ids.has(id))){l.ids=l.ids.filter(id=>!ids.has(id));if(l.ids.length)await DB.put('logs',l);else await DB.del('logs',l.date)}}S.logs=S.logs.filter(l=>l.ids.length);toast('已删除示例衣物');renderSettings()}break;
+  case 'sInstall':if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null}break;
+  case 'sClear':if(confirm('确定清空全部数据吗？所有衣物、照片和记录都将被删除且无法恢复！')&&confirm('再次确认：真的要清空吗？建议先导出备份。')){await DB.clear('items');await DB.clear('logs');S.items=[];S.logs=[];toast('已清空全部数据');renderSettings()}break;
+ }
+});
+function openStyleSheet(){
+ let sel=[...LS.get('defStyles',[])];
+ const draw=()=>{$('#defSty').innerHTML=`<button class="chip ${sel.length?'':'on'}" data-ds="">不限</button>`+STYLE_TAGS.map(t=>`<button class="chip ${sel.includes(t)?'on':''}" data-ds="${t}">${t}</button>`).join('')};
+ openSheet('默认风格偏好',`<div class="muted tiny" style="margin-bottom:10px">打开「今日搭配」时默认使用的风格（可多选）。在今日搭配页临时切换后，会记住你最后一次的选择。</div><div class="chips" id="defSty"></div><button class="btn block" id="defSave" style="margin-top:16px">保存并应用</button>`);
+ draw();
+ $('#defSty').onclick=e=>{const b=e.target.closest('[data-ds]');if(!b)return;const v=b.dataset.ds;sel=!v?[]:sel.includes(v)?sel.filter(x=>x!==v):[...sel,v];sel.sort((a,b)=>STYLE_TAGS.indexOf(a)-STYLE_TAGS.indexOf(b));draw()};
+ $('#defSave').onclick=()=>{LS.set('defStyles',sel);S.prefStyles=[...sel];LS.set('prefStyles',S.prefStyles);S.shown.clear();closeSheet();toast('已保存默认风格偏好');renderSettings()};
+}
+function exportData(){
+ if(IS_APP)return exportNative();
+ const data={app:'wardrobe-outfit',version:1,exportedAt:new Date().toISOString(),items:S.items,logs:S.logs,settings:{city:S.city,occ:S.occ,defStyles:LS.get('defStyles',[]),prefStyles:S.prefStyles}};
+ const blob=new Blob([JSON.stringify(data)],{type:'application/json'});const name=`衣橱备份-${todayStr()}.json`;
+ const dl=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast(`已导出 ${S.items.length} 件衣物`)};
+ let file=null;try{file=new File([blob],name,{type:'application/json'})}catch(e){}
+ if(file&&navigator.canShare&&/iPhone|iPad|iPod/i.test(navigator.userAgent)&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:'衣橱备份'}).catch(err=>{if(err.name!=='AbortError')dl()})}else dl();
+}
+function exportNative(){
+ openSheet('导出备份',`<div class="muted tiny" style="margin-bottom:12px">备份包含 ${S.items.length} 件衣物（含照片）和 ${S.logs.length} 条穿搭记录。</div>
+ <button class="btn block" id="exSave" style="margin-bottom:10px">💾 保存到手机文件</button>
+ <button class="btn ghost block" id="exShare">📤 分享到微信 / 其他应用</button>`);
+ const send=()=>{const json=JSON.stringify({app:'wardrobe-outfit',version:1,exportedAt:new Date().toISOString(),items:S.items,logs:S.logs,settings:{city:S.city,occ:S.occ,defStyles:LS.get('defStyles',[]),prefStyles:S.prefStyles}});const id=AndroidBridge.begin();for(let i=0;i<json.length;i+=400000)AndroidBridge.append(id,json.slice(i,i+400000));return id};
+ const name=`衣橱备份-${todayStr()}.json`;
+ $('#exSave').onclick=()=>{closeSheet();AndroidBridge.saveFile(send(),name)};
+ $('#exShare').onclick=()=>{closeSheet();AndroidBridge.shareFile(send(),name)};
+}
+window.__nativeSaved=(ok,msg)=>toast(ok?`✅ 备份已保存：${msg}`:(msg||'已取消保存'),3000);
+window.__androidBack=()=>{if($('#sheet').classList.contains('on')){closeSheet();return true}if(S.page!=='today'){S.editing=null;go('today');return true}return false};
+window.__setInsets=(t,b)=>{const r=document.documentElement.style;r.setProperty('--sat',t+'px');r.setProperty('--sab',b+'px')};
+$('#fileImport').addEventListener('change',async e=>{
+ const f=e.target.files[0];e.target.value='';if(!f)return;
+ try{const d=JSON.parse(await f.text());if(!d||!Array.isArray(d.items))throw new Error('格式不对');
+  const valid=d.items.filter(i=>i&&i.id&&i.cat).map(i=>({...i,wears:Array.isArray(i.wears)?i.wears:[],seasons:i.seasons||[],occasions:i.occasions||[],styleTags:Array.isArray(i.styleTags)?i.styleTags:[]}));
+  const replace=S.items.length?confirm(`备份中有 ${valid.length} 件衣物。\n点“确定”覆盖现有数据；点“取消”合并到现有衣橱。`):true;
+  if(replace){await DB.clear('items');await DB.clear('logs');S.items=[];S.logs=[]}
+  await DB.putMany('items',valid);const logs=(d.logs||[]).filter(l=>l&&l.date&&Array.isArray(l.ids));await DB.putMany('logs',logs);
+  const m=new Map(S.items.map(i=>[i.id,i]));valid.forEach(i=>m.set(i.id,i));S.items=[...m.values()];
+  const lm=new Map(S.logs.map(l=>[l.date,l]));logs.forEach(l=>lm.set(l.date,l));S.logs=[...lm.values()];
+  if(d.settings&&d.settings.city&&!S.city){S.city=d.settings.city;LS.set('city',S.city)}
+  toast(`已导入 ${valid.length} 件衣物`);renderSettings();
+ }catch(err){console.error(err);toast('导入失败：不是有效的备份文件')}
+});
+
+/* ===== 示例数据（图片由 canvas 生成，标注「示例」） ===== */
+const DEMO=[
+ ['白色基础T恤','上衣','T恤','白色',1,'休闲','春夏秋','通勤,休闲逛街,旅行出游,居家',0,'优衣库',79],
+ ['黑色圆领T恤','上衣','T恤','黑色',1,'休闲','春夏秋','通勤,休闲逛街,聚会派对,旅行出游',0,'无印良品',99],
+ ['白衬衫','上衣','衬衫','白色',2,'商务休闲','春夏秋','上班,通勤,会议,约会',0,'COS',399],
+ ['浅蓝条纹衬衫','上衣','衬衫','浅蓝',2,'商务休闲','春夏秋','上班,通勤,会议',0,'Zara',259],
+ ['藏青Polo衫','上衣','Polo衫','藏青',1,'商务休闲','夏','上班,通勤,休闲逛街',0,'Lacoste',690],
+ ['米色羊毛针织衫','上衣','针织衫/毛衣','米色',3,'商务休闲','秋冬','上班,通勤,约会,会议',0,'优衣库',299],
+ ['墨绿高领毛衣','上衣','针织衫/毛衣','绿色',4,'休闲','冬','约会,休闲逛街,聚会派对',0,'',359],
+ ['灰色连帽卫衣','上衣','卫衣','灰色',3,'休闲','春秋冬','休闲逛街,旅行出游,居家',0,'Champion',429],
+ ['速干运动T恤','上衣','运动上衣','蓝色',1,'运动','春夏秋','健身,户外徒步',0,'迪卡侬',69],
+ ['红色缎面吊带','上衣','背心/吊带','红色',1,'亮眼派对','夏秋','聚会派对,约会',0,'',199,'真丝面料，怕水'],
+ ['深蓝牛仔裤','裤子','牛仔裤','牛仔蓝',2,'休闲','春秋冬','通勤,休闲逛街,约会,旅行出游,聚会派对',0,"Levi's",599],
+ ['黑色西裤','裤子','西裤','黑色',2,'正式','春夏秋冬','上班,会议,通勤',0,'Theory',890],
+ ['卡其休闲裤','裤子','休闲裤','卡其',2,'商务休闲','春秋','上班,通勤,旅行出游,休闲逛街',0,'GAP',299],
+ ['灰色运动裤','裤子','运动裤','灰色',2,'运动','春秋冬','健身,居家,户外徒步',0,'Nike',399],
+ ['米色亚麻短裤','裤子','短裤','米色',1,'休闲','夏','休闲逛街,旅行出游,居家',0,'',159],
+ ['黑色运动短裤','裤子','短裤','黑色',1,'运动','夏','健身',0,'Adidas',199],
+ ['军绿软壳户外裤','裤子','休闲裤','军绿',3,'户外功能','春秋冬','户外徒步,旅行出游',1,'凯乐石',499],
+ ['黄色碎花连衣裙','裙子','连衣裙','黄色',1,'休闲','春夏','约会,休闲逛街,旅行出游,聚会派对',0,'',329],
+ ['黑色小礼服裙','裙子','连衣裙','黑色',2,'亮眼派对','春夏秋','聚会派对,约会',0,'',699],
+ ['藏青A字半身裙','裙子','半身裙','藏青',2,'商务休闲','春夏秋','上班,会议,通勤,约会',0,'',259],
+ ['浅蓝家居服套装','套装','家居服','浅蓝',2,'居家','春夏秋冬','居家',0,'',189],
+ ['黑色运动套装','套装','运动套装','黑色',2,'运动','春秋','健身,户外徒步',0,'Lululemon',980],
+ ['藏青西装外套','外套','西装外套','藏青',3,'正式','春秋','上班,会议,约会',0,'',1290],
+ ['卡其风衣','外套','风衣','卡其',3,'商务休闲','春秋','上班,通勤,约会,旅行出游',1,'Burberry',3990],
+ ['驼色羊毛大衣','外套','大衣','棕色',4,'商务休闲','冬','上班,通勤,会议,约会',0,'Max Mara',2990],
+ ['黑色长款羽绒服','外套','羽绒服','黑色',5,'休闲','冬','通勤,休闲逛街,旅行出游,户外徒步',1,'波司登',1499],
+ ['橙色冲锋衣','外套','冲锋衣','橙色',3,'户外功能','春秋冬','户外徒步,旅行出游',1,'始祖鸟',2800],
+ ['灰色针织开衫','外套','针织开衫','灰色',2,'休闲','春秋','居家,通勤,休闲逛街',0,'',259],
+ ['牛仔夹克','外套','夹克','牛仔蓝',3,'休闲','春秋','休闲逛街,旅行出游,聚会派对',0,"Levi's",699],
+ ['黑色运动外套','外套','卫衣外套','黑色',2,'运动','春秋','健身,户外徒步,休闲逛街',0,'Nike',499],
+ ['白色防晒衣','外套','防晒衣','白色',1,'户外功能','夏','户外徒步,旅行出游,休闲逛街',0,'蕉下',199],
+ ['小白鞋','鞋子','休闲鞋','白色',2,'休闲','春夏秋冬','通勤,休闲逛街,约会,旅行出游',0,'Veja',899],
+ ['蓝色跑鞋','鞋子','跑鞋','蓝色',2,'运动','春夏秋冬','健身',0,'Asics',799],
+ ['灰色运动鞋','鞋子','运动鞋','灰色',2,'运动','春夏秋冬','健身,休闲逛街,旅行出游,户外徒步',0,'New Balance',699],
+ ['防水徒步鞋','鞋子','徒步鞋','棕色',3,'户外功能','春夏秋冬','户外徒步,旅行出游',1,'Salomon',1199],
+ ['黑色德比皮鞋','鞋子','皮鞋','黑色',2,'正式','春夏秋冬','上班,会议,约会',0,'',899],
+ ['酒红高跟鞋','鞋子','高跟鞋','酒红',2,'亮眼派对','春夏秋','聚会派对,约会',0,'',599],
+ ['棕色麂皮切尔西靴','鞋子','靴子','棕色',4,'休闲','秋冬','通勤,约会,休闲逛街,聚会派对',0,'Clarks',1099,'麂皮材质，怕水'],
+ ['米色凉鞋','鞋子','凉鞋','米色',1,'休闲','夏','休闲逛街,旅行出游',0,'',259],
+ ['灰色拖鞋','鞋子','拖鞋','灰色',1,'居家','春夏秋冬','居家',0,'',39],
+ ['黑色通勤托特包','配饰','包','黑色',2,'商务休闲','春夏秋冬','上班,通勤,会议',0,'Longchamp',990],
+ ['灰色羊绒围巾','配饰','围巾','灰色',3,'商务休闲','秋冬','上班,通勤,约会,休闲逛街',0,'',599],
+ ['藏青棒球帽','配饰','帽子','藏青',1,'运动','春夏秋','健身,户外徒步,休闲逛街,旅行出游',0,'MLB',259],
+ ['黑色折叠伞','配饰','雨伞','黑色',1,'休闲','春夏秋冬','上班,通勤,会议,约会,休闲逛街,旅行出游',1,'',89],
+ ['银色手表','配饰','手表','银色',1,'商务休闲','春夏秋冬','上班,会议,约会',0,'',1599],
+ ['金色耳环','配饰','首饰','金色',1,'亮眼派对','春夏秋冬','约会,聚会派对',0,'',299],
+ ['月白盘扣衬衫','上衣','衬衫','白色',2,'商务休闲','春夏秋','上班,约会,聚会派对,旅行出游',0,'',459],
+ ['墨色马面裙','裙子','半身裙','黑色',2,'商务休闲','春秋冬','约会,聚会派对,旅行出游',0,'',599],
+ ['粉色针织开衫','外套','针织开衫','粉色',2,'休闲','春秋','约会,休闲逛街',0,'',269]
+];
+const DEMO_TAGS={'白色基础T恤':'简约,日系,美式休闲,中性风','黑色圆领T恤':'简约,街头,中性风','白衬衫':'简约,通勤风,法式优雅,商务正装','浅蓝条纹衬衫':'通勤风,法式优雅,日系','藏青Polo衫':'通勤风,美式休闲,复古','米色羊毛针织衫':'简约,通勤风,韩系,法式优雅','墨绿高领毛衣':'复古,文艺森系,法式优雅','灰色连帽卫衣':'街头,韩系,美式休闲,运动风','速干运动T恤':'运动风,户外机能风','红色缎面吊带':'法式优雅,甜美','深蓝牛仔裤':'美式休闲,简约,复古,街头','黑色西裤':'商务正装,通勤风,简约','卡其休闲裤':'日系,通勤风,工装机能,美式休闲','灰色运动裤':'运动风,街头','米色亚麻短裤':'日系,文艺森系,简约','黑色运动短裤':'运动风','军绿软壳户外裤':'工装机能,户外机能风','黄色碎花连衣裙':'甜美,法式优雅,文艺森系','黑色小礼服裙':'法式优雅,简约','藏青A字半身裙':'通勤风,韩系,法式优雅','浅蓝家居服套装':'简约,甜美','黑色运动套装':'运动风,街头','藏青西装外套':'商务正装,通勤风','卡其风衣':'法式优雅,通勤风,复古,韩系','驼色羊毛大衣':'法式优雅,韩系,简约,通勤风','黑色长款羽绒服':'简约,中性风,户外机能风','橙色冲锋衣':'户外机能风,工装机能,街头','灰色针织开衫':'韩系,日系,文艺森系,简约','牛仔夹克':'美式休闲,复古,街头','黑色运动外套':'运动风,街头','白色防晒衣':'运动风,户外机能风','小白鞋':'简约,韩系,日系,通勤风','蓝色跑鞋':'运动风','灰色运动鞋':'运动风,美式休闲,街头','防水徒步鞋':'户外机能风,工装机能','黑色德比皮鞋':'商务正装,复古,通勤风','酒红高跟鞋':'法式优雅,复古','棕色麂皮切尔西靴':'复古,美式休闲,工装机能','米色凉鞋':'日系,文艺森系','灰色拖鞋':'简约','黑色通勤托特包':'通勤风,简约,商务正装','灰色羊绒围巾':'简约,韩系,法式优雅','藏青棒球帽':'街头,美式休闲,运动风','黑色折叠伞':'简约','银色手表':'商务正装,简约,通勤风','金色耳环':'法式优雅,复古,甜美','月白盘扣衬衫':'新中式,文艺森系','墨色马面裙':'新中式,复古','粉色针织开衫':'甜美,韩系'};
+function shade(hex,amt){const n=parseInt(hex.slice(1),16);const f=v=>Math.max(0,Math.min(255,v+amt));return'#'+((f(n>>16)<<16)|(f(n>>8&255)<<8)|f(n&255)).toString(16).padStart(6,'0')}
+function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+function drawShape(g,it){
+ const P=pts=>{g.beginPath();pts.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath()};
+ const fs=()=>{g.fill();g.stroke()};const s=it.sub,c=it.cat;const base=g.fillStyle;
+ const pants=()=>{P([[-80,-160],[80,-160],[98,165],[22,165],[0,-40],[-22,165],[-98,165]]);fs()};
+ const topShape=(len,long)=>{g.beginPath();g.moveTo(-60,-140);g.quadraticCurveTo(0,-100,60,-140);if(long){g.lineTo(130,-115);g.lineTo(168,115);g.lineTo(128,125);g.lineTo(90,-20);g.lineTo(90,len);g.lineTo(-90,len);g.lineTo(-90,-20);g.lineTo(-128,125);g.lineTo(-168,115);g.lineTo(-130,-115)}else{g.lineTo(150,-95);g.lineTo(120,-25);g.lineTo(88,-45);g.lineTo(88,len);g.lineTo(-88,len);g.lineTo(-88,-45);g.lineTo(-120,-25);g.lineTo(-150,-95)}g.closePath();fs()};
+ if(c==='上衣'){
+  if(s==='背心/吊带'){g.beginPath();g.moveTo(-50,-145);g.lineTo(-38,-145);g.quadraticCurveTo(0,-80,38,-145);g.lineTo(50,-145);g.quadraticCurveTo(58,-70,88,-50);g.lineTo(88,150);g.lineTo(-88,150);g.lineTo(-88,-50);g.quadraticCurveTo(-58,-70,-50,-145);g.closePath();fs();return}
+  topShape(150,['衬衫','针织衫/毛衣','卫衣','家居上衣'].includes(s));
+  if(s==='衬衫'||s==='Polo衫'){g.fillStyle=shade(base,-18);P([[-60,-140],[0,-95],[-25,-80]]);fs();P([[60,-140],[0,-95],[25,-80]]);fs();g.beginPath();g.moveTo(0,-95);g.lineTo(0,s==='衬衫'?150:-30);g.stroke()}
+  if(s==='卫衣'){g.beginPath();g.ellipse(0,-150,48,26,0,Math.PI,0);g.stroke();g.strokeRect(-50,50,100,55)}
+  if(s==='针织衫/毛衣'){for(let y=120;y<150;y+=10){g.beginPath();g.moveTo(-88,y);g.lineTo(88,y);g.stroke()}}
+  if(s==='运动上衣'){g.save();g.strokeStyle='rgba(255,255,255,.85)';g.lineWidth=10;g.beginPath();g.moveTo(-88,0);g.lineTo(88,0);g.stroke();g.restore()}
+  return}
+ if(c==='裤子'){if(s==='短裤')P([[-85,-120],[85,-120],[105,60],[15,60],[0,-30],[-15,60],[-105,60]]),fs();else pants();g.beginPath();g.moveTo(-80,s==='短裤'?-95:-130);g.lineTo(80,s==='短裤'?-95:-130);g.stroke();return}
+ if(c==='套装'){g.save();g.scale(.6,.6);g.translate(-135,-20);topShape(130,true);g.translate(275,20);pants();g.restore();return}
+ if(c==='裙子'){
+  if(s!=='连衣裙'){const b=s==='短裙'?40:120;g.beginPath();g.moveTo(-60,-120);g.lineTo(60,-120);g.lineTo(125,b);g.quadraticCurveTo(0,b+25,-125,b);g.closePath();fs();g.beginPath();g.moveTo(-62,-95);g.lineTo(62,-95);g.stroke();return}
+  g.beginPath();g.moveTo(-42,-165);g.lineTo(-28,-165);g.quadraticCurveTo(0,-125,28,-165);g.lineTo(42,-165);g.quadraticCurveTo(52,-90,62,-40);g.lineTo(145,165);g.quadraticCurveTo(0,190,-145,165);g.lineTo(-62,-40);g.quadraticCurveTo(-52,-90,-42,-165);g.closePath();fs();g.beginPath();g.moveTo(-62,-40);g.lineTo(62,-40);g.stroke();
+  if(it.color==='黄色'){g.fillStyle='#fff';for(let k=0;k<14;k++){const x=-90+((k*53)%180),y=-10+((k*71)%160);g.beginPath();g.arc(x*(0.5+y/320),y,6,0,Math.PI*2);g.fill()}}
+  return}
+ if(c==='外套'){const long=['风衣','大衣','羽绒服'].includes(s);topShape(long?185:140,true);g.beginPath();g.moveTo(0,-110);g.lineTo(0,long?185:140);g.stroke();
+  if(['西装外套','风衣','大衣'].includes(s)){g.fillStyle=shade(base,-15);P([[-60,-140],[0,-40],[-30,-60],[-45,-100]]);fs();P([[60,-140],[0,-40],[30,-60],[45,-100]]);fs()}
+  if(s==='羽绒服'){for(let y=-80;y<185;y+=45){g.beginPath();g.moveTo(-90,y);g.lineTo(90,y);g.stroke()}}
+  if(s==='冲锋衣'||s==='卫衣外套'||s==='防晒衣'){g.beginPath();g.ellipse(0,-150,52,28,0,Math.PI,0);g.stroke()}
+  return}
+ if(c==='鞋子'){
+  if(s==='高跟鞋'){g.beginPath();g.moveTo(-150,-30);g.quadraticCurveTo(-120,-50,-100,-40);g.quadraticCurveTo(0,40,140,40);g.quadraticCurveTo(165,45,160,75);g.lineTo(-30,75);g.quadraticCurveTo(-90,30,-125,20);g.lineTo(-125,110);g.lineTo(-145,110);g.closePath();fs();return}
+  if(s==='凉鞋'||s==='拖鞋'){g.beginPath();g.ellipse(0,60,165,30,0,0,Math.PI*2);fs();g.lineWidth=26;g.strokeStyle=shade(base,-25);g.beginPath();g.arc(30,60,60,Math.PI*1.1,Math.PI*1.9);g.stroke();if(s==='凉鞋'){g.beginPath();g.arc(-90,60,45,Math.PI*1.1,Math.PI*1.9);g.stroke()}return}
+  if(s==='靴子'||s==='徒步鞋'){const top=s==='靴子'?-150:-70;P([[-140,top],[-50,top],[-40,-40],[40,-10],[130,10],[155,50],[155,80],[-150,80],[-150,top+10]]);fs()}
+  else{g.beginPath();g.moveTo(-150,75);g.lineTo(-150,-10);g.quadraticCurveTo(-140,-45,-100,-45);g.lineTo(-40,-55);g.quadraticCurveTo(0,-20,60,-5);g.quadraticCurveTo(150,10,157,50);g.lineTo(157,75);g.closePath();fs()}
+  g.fillStyle=s==='皮鞋'||s==='靴子'?'#2a2a2a':'#fafafa';g.fillRect(-152,66,311,20);g.strokeRect(-152,66,311,20);
+  if(['运动鞋','跑鞋','休闲鞋','徒步鞋'].includes(s)){g.beginPath();for(let x=-60;x<20;x+=22){g.moveTo(x,-40+(x+60)*.3);g.lineTo(x+25,-20+(x+60)*.3)}g.stroke()}
+  return}
+ if(s==='包'){rr(g,-130,-40,260,180,24);fs();g.lineWidth=16;g.beginPath();g.arc(0,-40,75,Math.PI,0);g.stroke();return}
+ if(s==='帽子'){g.beginPath();g.arc(0,40,120,Math.PI,0);g.closePath();fs();g.beginPath();g.ellipse(90,40,120,22,0,0,Math.PI*2);fs();return}
+ if(s==='围巾'){P([[-110,-150],[-20,-150],[-60,40],[-140,30]]);fs();P([[-60,-160],[40,-160],[60,140],[-40,140]]);fs();g.beginPath();for(let x=-40;x<60;x+=14){g.moveTo(x,140);g.lineTo(x+2,170)}g.stroke();return}
+ if(s==='雨伞'){g.beginPath();g.moveTo(-160,0);g.quadraticCurveTo(0,-200,160,0);[100,40,-20,-80,-160].forEach(x=>g.quadraticCurveTo(x+30,-25,x,0));g.closePath();fs();g.lineWidth=10;g.beginPath();g.moveTo(0,-5);g.lineTo(0,140);g.arc(-25,140,25,0,Math.PI);g.stroke();return}
+ if(s==='手表'){g.fillRect(-35,-170,70,340);g.strokeRect(-35,-170,70,340);g.beginPath();g.arc(0,0,75,0,Math.PI*2);fs();g.fillStyle='#fff';g.beginPath();g.arc(0,0,58,0,Math.PI*2);g.fill();g.strokeStyle='#333';g.beginPath();g.moveTo(0,0);g.lineTo(0,-40);g.moveTo(0,0);g.lineTo(30,10);g.stroke();return}
+ if(s==='首饰'){[-70,70].forEach(x=>{g.beginPath();g.arc(x,-90,10,0,Math.PI*2);g.stroke();g.beginPath();g.moveTo(x,-80);g.lineTo(x-35,40);g.lineTo(x,110);g.lineTo(x+35,40);g.closePath();fs()});return}
+ g.beginPath();g.arc(0,0,110,0,Math.PI*2);fs();
+}
+function demoImage(it){
+ const c=document.createElement('canvas');c.width=c.height=480;const g=c.getContext('2d');
+ const col=(COLOR[it.color]||{}).hex||'#999999';
+ const grd=g.createLinearGradient(0,0,480,480);grd.addColorStop(0,'#f6f4f0');grd.addColorStop(1,'#e6e1d8');g.fillStyle=grd;g.fillRect(0,0,480,480);
+ g.fillStyle='rgba(0,0,0,.06)';g.beginPath();g.ellipse(240,430,150,16,0,0,Math.PI*2);g.fill();
+ g.save();g.translate(240,228);g.scale(.92,.92);g.fillStyle=col;g.strokeStyle=shade(col,col==='#1f1f1f'?70:-45);g.lineWidth=5;g.lineJoin='round';g.lineCap='round';drawShape(g,it);g.restore();
+ g.fillStyle='rgba(0,0,0,.55)';rr(g,16,16,84,36,18);g.fill();g.fillStyle='#fff';g.font='bold 20px "PingFang SC","Noto Sans CJK SC",sans-serif';g.textAlign='center';g.fillText('示例',58,41);
+ return c.toDataURL('image/jpeg',.8);
+}
+async function loadDemo(){
+ if(S.items.some(i=>i.demo)&&!confirm('已有示例衣物，是否重新生成？（会替换旧的示例衣物）'))return;
+ toast('正在生成示例衣物…');await new Promise(r=>setTimeout(r,30));
+ const old=S.items.filter(i=>i.demo).map(i=>i.id);for(const id of old)await DB.del('items',id);S.items=S.items.filter(i=>!i.demo);
+ const td=todayStr();const rnd=mulberry32(20261018);const now=Date.now();
+ const items=DEMO.map((d,k)=>{const [name,cat,sub,color,warmth,style,se,oc,wp,brand,price,notes]=d;
+  const it={id:'demo-'+k+'-'+uid(),demo:true,name,cat,sub,color,warmth,style,seasons:[...se],occasions:oc.split(','),styleTags:(DEMO_TAGS[name]||'').split(',').filter(Boolean),waterproof:!!wp,brand,price,notes:notes||'示例数据，可编辑或删除',fav:k%9===2,created:now-k*1000,buyDate:addDays(td,-Math.floor(rnd()*700+20)),wears:[]};
+  const n=k%7===4?0:Math.floor(rnd()*14);const set=new Set();for(let j=0;j<n;j++)set.add(addDays(td,-Math.floor(rnd()*90+2)));it.wears=[...set].sort();
+  it.photo=demoImage(it);return it});
+ await DB.putMany('items',items);S.items.push(...items);S.shown.clear();
+ toast(`已加载 ${items.length} 件示例衣物 ✨`);refresh();
+}
+
+/* ===== 启动 ===== */
+(async function init(){
+ await DB.open();
+ try{S.items=await DB.all('items');S.logs=await DB.all('logs')}catch(e){console.error(e)}
+ renderToday();
+ if(S.city&&S.city.manual){const mw=LS.get('manualWx',null);if(mw){S.wx=mw;S.wxState='ok'}else S.wxState='nocity';renderWx();renderRecs()}
+ else if(S.city)loadWeather();
+ else if(canGeo()&&!LS.get('geoAsked',false)){LS.set('geoAsked',true);locate()}
+ else{S.wxState='nocity';renderWx();renderRecs()}
+ if(IS_APP){const sub=$('#p-settings .sub');if(sub)sub.textContent='数据保存在本应用内';}
+ if(location.protocol.startsWith('http')&&!IS_APP){
+  const l=document.createElement('link');l.rel='manifest';l.href='manifest.json';document.head.appendChild(l);
+  if('serviceWorker' in navigator&&window.isSecureContext)navigator.serviceWorker.register('sw.js').catch(e=>console.warn('SW 注册失败',e));
+ }
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&S.page==='today'&&S.city&&!S.city.manual)loadWeather()});
+})();
+</script>
+</body>
+</html>
